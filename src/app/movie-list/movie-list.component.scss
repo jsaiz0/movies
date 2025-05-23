@@ -1,0 +1,49 @@
+/* Estilos CSS para el listado de películas */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+div {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+input[type='text'] {
+  width: 80%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+}
+
+a:hover {
+  color: blue;
+}
+
+p {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}

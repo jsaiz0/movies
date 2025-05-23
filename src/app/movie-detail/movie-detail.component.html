@@ -1,0 +1,106 @@
+<div *ngIf="type === 'movie' && movie">
+  <h2>{{ movie.title || movie.original_title }}</h2>
+  <img *ngIf="movie.poster_path" [src]="getImageUrl(movie.poster_path)"
+    alt="Poster de la película">
+
+  <p><strong>Título Original:</strong> {{ movie.original_title }}</p>
+  <p><strong>Fecha de Lanzamiento:</strong> {{ movie.release_date }}</p>
+  <p><strong>Idioma Original:</strong> {{ movie.original_language | uppercase }}
+  </p>
+  <p><strong>Descripción:</strong> {{ movie.overview }}</p>
+
+  <p><strong>Géneros:</strong>
+    <span *ngFor="let genre of movie.genres; let last = last">{{ genre.name }}{{
+      !last ? ', ' : '' }}</span>
+  </p>
+
+  <p *ngIf="movie.runtime"><strong>Duración:</strong> {{ movie.runtime }}
+    minutos</p>
+  <p *ngIf="movie.budget"><strong>Presupuesto:</strong> {{ movie.budget |
+    currency }}</p>
+  <p *ngIf="movie.revenue"><strong>Recaudación:</strong> {{ movie.revenue |
+    currency }}</p>
+  <p><strong>Puntuación:</strong> {{ movie.vote_average }} ({{ movie.vote_count
+    }} votos)</p>
+  <p *ngIf="movie.status"><strong>Estado:</strong> {{ movie.status }}</p>
+  <p *ngIf="movie.adult"><strong>Es Adulta:</strong> Sí</p>
+  <p *ngIf="!movie.adult"><strong>Es Adulta:</strong> No</p>
+  <p *ngIf="movie.tagline"><strong>Eslogan:</strong> {{ movie.tagline }}</p>
+  <p *ngIf="movie.homepage"><strong>Página Web:</strong> <a
+      [href]="movie.homepage" target="_blank">{{ movie.homepage }}</a></p>
+
+  <h3>Producción</h3>
+  <p *ngIf="movie.production_companies"><strong>Compañías:</strong>
+    <span *ngFor="let company of movie.production_companies; let last = last">{{
+      company.name }}{{ !last ? ', ' : '' }}</span>
+  </p>
+  <p *ngIf="movie.production_countries"><strong>Países:</strong>
+    <span *ngFor="let country of movie.production_countries; let last = last">{{
+      country.name }}{{ !last ? ', ' : '' }}</span>
+  </p>
+
+  <h3>Idiomas Hablados</h3>
+  <p *ngIf="movie.spoken_languages">
+    <span *ngFor="let language of movie.spoken_languages; let last = last">{{
+      language.english_name }}{{ !last ? ', ' : '' }}</span>
+  </p>
+
+  <button routerLink="/">Volver al listado</button>
+</div>
+
+<div *ngIf="type === 'tv' && tvShow">
+  <h2>{{ tvShow.name || tvShow.original_name }}</h2>
+  <img *ngIf="tvShow.poster_path" [src]="getImageUrl(tvShow.poster_path)"
+    alt="Poster de la serie">
+
+  <p><strong>Nombre Original:</strong> {{ tvShow.original_name }}</p>
+  <p><strong>Primera Emisión:</strong> {{ tvShow.first_air_date }}</p>
+  <p><strong>Idioma Original:</strong> {{ tvShow.original_language | uppercase
+    }}</p>
+  <p><strong>Descripción:</strong> {{ tvShow.overview }}</p>
+
+  <p><strong>Géneros:</strong>
+    <span *ngFor="let genre of tvShow.genres; let last = last">{{ genre.name
+      }}{{ !last ? ', ' : '' }}</span>
+  </p>
+
+  <p *ngIf="tvShow.number_of_episodes"><strong>Número de Episodios:</strong> {{
+    tvShow.number_of_episodes }}</p>
+  <p *ngIf="tvShow.number_of_seasons"><strong>Número de Temporadas:</strong> {{
+    tvShow.number_of_seasons }}</p>
+  <p *ngIf="tvShow.status"><strong>Estado:</strong> {{ tvShow.status }}</p>
+  <p *ngIf="tvShow.in_production"><strong>En Producción:</strong> {{
+    tvShow.in_production ? 'Sí' : 'No' }}</p>
+  <p *ngIf="tvShow.type"><strong>Tipo:</strong> {{ tvShow.type }}</p>
+  <p><strong>Puntuación:</strong> {{ tvShow.vote_average }} ({{
+    tvShow.vote_count }} votos)</p>
+  <p *ngIf="tvShow.homepage"><strong>Página Web:</strong> <a
+      [href]="tvShow.homepage" target="_blank">{{ tvShow.homepage }}</a></p>
+
+  <h3>Creadores</h3>
+  <p *ngFor="let creator of tvShow.created_by">{{ creator.name }}</p>
+
+  <h3>Redes</h3>
+  <p *ngFor="let network of tvShow.networks">{{ network.name }} ({{
+    network.origin_country }})</p>
+
+  <h3>Idiomas</h3>
+  <p *ngFor="let language of tvShow.languages">{{ language }}</p>
+
+  <h3>Temporadas</h3>
+  <div *ngFor="let season of tvShow.seasons">
+    <strong>{{ season.name }}</strong> (Episodios: {{ season.episode_count }},
+    Fecha de Emisión: {{ season.air_date }})
+  </div>
+
+  <p *ngIf="tvShow.episode_run_time && tvShow.episode_run_time.length > 0">
+    <strong>Duración de Episodios:</strong> {{ tvShow.episode_run_time.join(',
+    ') }} minutos
+  </p>
+
+  <button routerLink="/">Volver al listado</button>
+</div>
+
+<div *ngIf="!movie && !tvShow">
+  <p>Cargando detalles...</p>
+</div>

@@ -1,0 +1,24 @@
+<h2>Buscar Películas y Series</h2>
+
+<div>
+  <label>
+    <input type="radio" name="searchType" value="movie" [(ngModel)]="searchType"
+      (change)="toggleSearchType('movie')"> Películas
+  </label>
+  <label>
+    <input type="radio" name="searchType" value="tv" [(ngModel)]="searchType"
+      (change)="toggleSearchType('tv')"> Series de TV
+  </label>
+</div>
+
+<input type="text" placeholder="Buscar título..." (input)="search($event)">
+
+<ul *ngIf="searchResults.length > 0">
+  <li *ngFor="let item of searchResults">
+    <a href="javascript:void(0)" (click)="showDetails(item, searchType)">
+      {{ item.title || item.name }}
+    </a>
+  </li>
+</ul>
+
+<p *ngIf="searchResults.length === 0 && searchTerm">No se encontraron resultados.</p>
