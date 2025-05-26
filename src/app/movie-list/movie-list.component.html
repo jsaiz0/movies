@@ -1,24 +1,76 @@
-<h2>Buscar Películas y Series</h2>
+<div class="movie-list-container">
+  <h2>Buscar Películas y Series</h2>
 
-<div>
-  <label>
-    <input type="radio" name="searchType" value="movie" [(ngModel)]="searchType"
-      (change)="toggleSearchType('movie')"> Películas
-  </label>
-  <label>
-    <input type="radio" name="searchType" value="tv" [(ngModel)]="searchType"
-      (change)="toggleSearchType('tv')"> Series de TV
-  </label>
+  <mat-tab-group (selectedIndexChange)="toggleSearchType($event)"
+    mat-stretch-tabs="false" mat-align-tabs="center">
+    <mat-tab label="Películas" value="movie">
+      <form class="search-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar título</mat-label>
+          <input matInput type="text"
+            placeholder="Escribe para empezar a buscar..."
+            (input)="search($event)">
+        </mat-form-field>
+      </form>
+      <mat-list *ngIf="searchResults.length > 0">
+        @for (item of searchResults; track item) {
+        <mat-list-item>
+
+          <a href="javascript:void(0)" (click)="showDetails(item, searchType)">
+            {{ item.title || item.name }}
+          </a>
+
+        </mat-list-item> }
+      </mat-list>
+      <div *ngIf="searching">
+        <mat-progress-bar class="searching-bar" [mode]="mode">
+        </mat-progress-bar>
+      </div>
+      <p *ngIf="searched && searchResults.length === 0 && searchTerm">No se
+        encontraron
+        resultados.</p>
+
+      <mat-paginator *ngIf="totalResults" [length]="totalResults"
+        [pageSize]="20" [pageSizeOptions]="[20, 50, 100]"
+        (page)="pageChanged($event)" aria-label="Select page">
+      </mat-paginator>
+
+    </mat-tab>
+    <mat-tab label="Series de TV" value="tv">
+      <form class="search-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar título</mat-label>
+          <input matInput type="text"
+            placeholder="Escribe para empezar a buscar..."
+            (input)="search($event)">
+        </mat-form-field>
+      </form>
+      <mat-list *ngIf="searchResults.length > 0">
+        @for (item of searchResults; track item) {
+        <mat-list-item>
+
+          <a href="javascript:void(0)" (click)="showDetails(item, searchType)">
+            {{ item.title || item.name }}
+          </a>
+
+        </mat-list-item>
+        }
+      </mat-list>
+      <div *ngIf="searching">
+        <mat-progress-bar
+        class="searching-bar"
+        [mode]="mode">
+      </mat-progress-bar>
+    </div>
+
+      <p *ngIf="searched && searchResults.length === 0 && searchTerm">No se
+        encontraron
+        resultados.</p>
+
+      <mat-paginator *ngIf="searchResults.length > 0" [length]="totalResults"
+        [pageSize]="20" [pageSizeOptions]="[20, 50, 100]"
+        (page)="pageChanged($event)" aria-label="Select page">
+      </mat-paginator>
+    </mat-tab>
+  </mat-tab-group>
 </div>
-
-<input type="text" placeholder="Buscar título..." (input)="search($event)">
-
-<ul *ngIf="searchResults.length > 0">
-  <li *ngFor="let item of searchResults">
-    <a href="javascript:void(0)" (click)="showDetails(item, searchType)">
-      {{ item.title || item.name }}
-    </a>
-  </li>
-</ul>
-
-<p *ngIf="searchResults.length === 0 && searchTerm">No se encontraron resultados.</p>

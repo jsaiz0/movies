@@ -1,37 +1,22 @@
-/* Estilos CSS para el detalle de la película */
-div {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
+.movie-detail-container {
+  padding: 16px;
+  margin: auto;
+  max-width: 1200px;
+  display: block;
 }
 
-h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
+mat-card {
+  margin-bottom: 16px;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: 15px;
-  border-radius: 5px;
+mat-card-title {
+  font-size: 24px;
 }
 
-p {
-  margin-bottom: 10px;
-  text-align: left;
+mat-card-content {
+  margin-bottom: 16px;
 }
 
-strong {
-  font-weight: bold;
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+mat-list {
+  margin-bottom: 16px;
 }
