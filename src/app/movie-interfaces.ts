@@ -76,3 +76,10 @@ export interface TVShowDetail {
   vote_average: number;
   vote_count: number;
 }
+
+export interface PagedResponse<T> {
+  page: number;
+  results: T[];
+  total_pages: number;
+  total_results: number;
+}

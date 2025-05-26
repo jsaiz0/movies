@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MovieDetail, MovieListItem, MovieSearchResult, TVShowDetail } from './movie-interfaces';
+import { MovieDetail, MovieListItem, MovieSearchResult, TVShowDetail, PagedResponse } from './movie-interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -14,18 +14,20 @@ export class MovieService {
 
   constructor(private http: HttpClient) { }
 
-  searchMovies(query: string): Observable<MovieListItem[]> {
-    const params = new HttpParams().set('api_key', this.apiKey).set('query', query);
-    return this.http
-      .get<MovieSearchResult>(`${this.apiUrl}/search/movie`, { params })
-      .pipe(map((data) => data.results));
+  searchMovies(query: string, page: number): Observable<PagedResponse<MovieListItem>> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('query', query)
+      .set('page', page.toString());
+    return this.http.get<PagedResponse<MovieListItem>>(`${this.apiUrl}/search/movie`, { params });
   }
 
-  searchTVShows(query: string): Observable<MovieListItem[]> {
-    const params = new HttpParams().set('api_key', this.apiKey).set('query', query);
-    return this.http
-      .get<MovieSearchResult>(`${this.apiUrl}/search/tv`, { params })
-      .pipe(map((data) => data.results));
+  searchTVShows(query: string, page: number): Observable<PagedResponse<MovieListItem>> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('query', query)
+      .set('page', page.toString());
+    return this.http.get<PagedResponse<MovieListItem>>(`${this.apiUrl}/search/tv`, { params });
   }
 
   getMovieDetails(id: number, type: 'movie' | 'tv'): Observable<MovieDetail | TVShowDetail> {
