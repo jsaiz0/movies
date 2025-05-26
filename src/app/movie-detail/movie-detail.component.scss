@@ -20,3 +20,21 @@ mat-card-content {
 mat-list {
   margin-bottom: 16px;
 }
+
+.error-card {  
+    width: 50%;
+    margin: auto;
+    padding: 50px;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 16px;
+  border-radius: 4px;
+
+ mat-card-title {
+  margin-bottom: 20px;
+}
+.mat-mdc-card-content{
+  text-align: center;
+}
+
+}
