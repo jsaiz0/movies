@@ -1,4 +1,21 @@
-<div *ngIf="movie || tvShow" class="movie-detail-container">
+<!-- Indicador de Carga -->
+<div *ngIf="loading">
+  <mat-progress-bar [mode]="mode"></mat-progress-bar>
+  <p>Cargando detalles...</p>
+</div>
+
+<!-- Mensaje de Error -->
+<div *ngIf="!loading && error">
+  <mat-card class="error-card">
+    <mat-card-title>Error</mat-card-title>
+    <mat-card-content>
+      <p>{{ error }}</p>
+      <button mat-stroked-button routerLink="/">Volver al inicio</button>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="(movie || tvShow) && !loading" class="movie-detail-container">
   <mat-card *ngIf="movie">
     <mat-card-header>
       <mat-card-title-group>
@@ -126,6 +143,3 @@
   </mat-card>
 </div>
 
-<div *ngIf="!movie && !tvShow">
-  <p>Cargando detalles...</p>
-</div>
