@@ -4,11 +4,11 @@
       <form class="search-form">
         <mat-form-field appearance="outline">
           <mat-label>Buscar título</mat-label>
-          <input 
-          matInput 
-          name="searchInput" 
-          [ngModel]="searchText" 
-          type="text" 
+          <input
+          matInput
+          name="searchInput"
+          [ngModel]="searchText"
+          type="text"
           placeholder="Escribe para empezar a buscar..."
           (input)="search($event)"
           autocomplete="off">
@@ -32,7 +32,7 @@
         encontraron
         resultados.</p>
 
-      <mat-paginator *ngIf="totalResults" [length]="totalResults" [pageSize]="20" [pageSizeOptions]="[20, 50, 100]"
+      <mat-paginator *ngIf="totalResults" [length]="totalResults" [pageSize]="20"
         (page)="pageChanged($event)" aria-label="Select page">
       </mat-paginator>
 
@@ -41,11 +41,11 @@
       <form class="search-form">
         <mat-form-field appearance="outline">
           <mat-label>Buscar título</mat-label>
-          <input 
-          matInput 
-          name="searchInput" 
-          [ngModel]="searchText" 
-          type="text" 
+          <input
+          matInput
+          name="searchInput"
+          [ngModel]="searchText"
+          type="text"
           placeholder="Escribe para empezar a buscar..."
           (input)="search($event)"
           autocomplete="off">
@@ -70,7 +70,7 @@
         No se encontraron resultados.
       </p>
 
-      <mat-paginator *ngIf="totalResults" [length]="totalResults" [pageSize]="20" [pageSizeOptions]="[20, 50, 100]"
+      <mat-paginator *ngIf="totalResults" [length]="totalResults" [pageSize]="20"
         (page)="pageChanged($event)" aria-label="Select page">
       </mat-paginator>
     </mat-tab>
