@@ -2,12 +2,25 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
 
+## Instalar proyecto
+
+[Documentacion bun](https://bun.sh/docs/installation)
+
+```
+git clone https://github.com/jsaiz0/movies.git
+
+cd movies
+
+curl -fsSL https://bun.sh/install | bash
+
+bun install
+```
 ## Development server
 
 To start a local development server, run:
 
 ```bash
-ng serve
+ng serve -o
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
