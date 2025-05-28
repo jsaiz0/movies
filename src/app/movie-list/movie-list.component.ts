@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subject, of, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MovieListItem, PagedResponse } from '@app/movie-interfaces';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
@@ -20,7 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'app-movie-list',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatTabsModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressBarModule, RouterModule, MatCardModule],
+  imports: [FormsModule, MatTabsModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressBarModule, RouterModule, MatCardModule],
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.scss'],
 })

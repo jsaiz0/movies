@@ -1,150 +1,246 @@
 <!-- Indicador de Carga -->
-<div *ngIf="loading">
-  <mat-progress-bar [mode]="mode"></mat-progress-bar>
-  <p>Cargando detalles...</p>
-</div>
+@if (loading) {
+  <div>
+    <mat-progress-bar [mode]="mode"></mat-progress-bar>
+    <p>Cargando detalles...</p>
+  </div>
+}
 
 <!-- Mensaje de Error -->
-<div *ngIf="!loading && error">
-  <mat-card class="error-card">
-    <mat-card-title>Error</mat-card-title>
-    <mat-card-content>
-      <p>{{ error }}</p>
-      <button mat-flat-button routerLink="/">Volver al inicio</button>
-    </mat-card-content>
-  </mat-card>
-</div>
+@if (!loading && error) {
+  <div>
+    <mat-card class="error-card">
+      <mat-card-title>Error</mat-card-title>
+      <mat-card-content>
+        <p>{{ error }}</p>
+        <button mat-flat-button routerLink="/">Volver al inicio</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}
 
 <!-- Contenedor principal de la página de detalles -->
-<div *ngIf="!loading && !error && (movie || tvShow)" class="detail-page-container">
-
-  <!-- Detalles de la Película -->
-  <ng-container *ngIf="movie">
-    <section class="header-section"
-             [style.background-image]="movie.backdrop_path ? 'url(' + getImageUrl(movie.backdrop_path) + ')' : null"
-             [class.no-backdrop]="!movie.backdrop_path">
-      <div class="header-overlay">
-        <div class="header-content">
-          <div class="poster">
-            <img *ngIf="movie.poster_path" [src]="getImageUrl(movie.poster_path)" [alt]="movie.title">
-            <div *ngIf="!movie.poster_path" class="no-poster-placeholder">Sin póster</div>
-          </div>
-          <div class="info">
-            <h1>{{ movie.title }} <span class="release-year" *ngIf="movie.release_date">({{ movie.release_date | date:'yyyy' }})</span></h1>
-            <div class="facts-bar">
-              <span *ngIf="movie.release_date">{{ movie.release_date | date:'dd/MM/yyyy' }} ({{movie.original_language | uppercase }})</span>
-              <span *ngIf="movie.genres && movie.genres.length > 0" class="genres">
-                &bull; <ng-container *ngFor="let genre of movie.genres; let last = last">{{ genre.name }}{{ !last ? ', ' : '' }}</ng-container>
-              </span>
-              <span *ngIf="movie.runtime">&bull; {{ movie.runtime }} min</span>
+@if (!loading && !error && (movie || tvShow)) {
+  <div class="detail-page-container">
+    <!-- Detalles de la Película -->
+    @if (movie) {
+      <section class="header-section"
+        [style.background-image]="movie.backdrop_path ? 'url(' + getImageUrl(movie.backdrop_path) + ')' : null"
+        [class.no-backdrop]="!movie.backdrop_path">
+        <div class="header-overlay">
+          <div class="header-content">
+            <div class="poster">
+              @if (movie.poster_path) {
+                <img [src]="getImageUrl(movie.poster_path)" [alt]="movie.title">
+              }
+              @if (!movie.poster_path) {
+                <div class="no-poster-placeholder">Sin póster</div>
+              }
             </div>
-            <div class="user-score" *ngIf="movie.vote_average">
-              <strong>Puntuación:</strong> {{ (movie.vote_average * 10).toFixed(0) }}% <span>({{movie.vote_count}} votos)</span>
+            <div class="info">
+              <h1>{{ movie.title }} @if (movie.release_date) {
+                <span class="release-year">({{ movie.release_date | date:'yyyy' }})</span>
+              }</h1>
+              <div class="facts-bar">
+                @if (movie.release_date) {
+                  <span>{{ movie.release_date | date:'dd/MM/yyyy' }} ({{movie.original_language | uppercase }})</span>
+                }
+                @if (movie.genres && movie.genres.length > 0) {
+                  <span class="genres">
+                    &bull; @for (genre of movie.genres; track genre; let last = $last) {
+                    {{ genre.name }}{{ !last ? ', ' : '' }}
+                  }
+                </span>
+              }
+              @if (movie.runtime) {
+                <span>&bull; {{ movie.runtime }} min</span>
+              }
             </div>
-            <p class="tagline" *ngIf="movie.tagline">{{ movie.tagline }}</p>
+            @if (movie.vote_average) {
+              <div class="user-score">
+                <strong>Puntuación:</strong> {{ (movie.vote_average * 10).toFixed(0) }}% <span>({{movie.vote_count}} votos)</span>
+              </div>
+            }
+            @if (movie.tagline) {
+              <p class="tagline">{{ movie.tagline }}</p>
+            }
             <h3>Resumen</h3>
             <p class="overview">{{ movie.overview || 'No hay resumen disponible.' }}</p>
           </div>
         </div>
       </div>
     </section>
-
     <section class="main-content-section">
       <div class="details-grid">
-        <div class="detail-item" *ngIf="movie.status"><strong>Estado:</strong> {{ movie.status }}</div>
-        <div class="detail-item" *ngIf="movie.original_title && movie.original_title !== movie.title"><strong>Título Original:</strong> {{ movie.original_title }}</div>
-        <div class="detail-item" *ngIf="movie.budget"><strong>Presupuesto:</strong> {{ movie.budget | currency:'USD':'symbol':'1.0-0' }}</div>
-        <div class="detail-item" *ngIf="movie.revenue"><strong>Recaudación:</strong> {{ movie.revenue | currency:'USD':'symbol':'1.0-0' }}</div>
-        <div class="detail-item" *ngIf="movie.production_companies && movie.production_companies.length > 0">
-          <strong>Compañías Productoras:</strong>
-          <span class="chip-list"><span class="chip" *ngFor="let company of movie.production_companies">{{ company.name }}</span></span>
-        </div>
-        <div class="detail-item" *ngIf="movie.production_countries && movie.production_countries.length > 0">
-          <strong>Países de Producción:</strong>
-          <span class="chip-list"><span class="chip" *ngFor="let country of movie.production_countries">{{ country.name }}</span></span>
-        </div>
-        <div class="detail-item" *ngIf="movie.spoken_languages && movie.spoken_languages.length > 0">
-          <strong>Idiomas Hablados:</strong>
-          <span class="chip-list"><span class="chip" *ngFor="let lang of movie.spoken_languages">{{ lang.english_name }}</span></span>
-        </div>
-        <div class="detail-item" *ngIf="movie.homepage"><strong>Página Web:</strong> <a [href]="movie.homepage" target="_blank" rel="noopener noreferrer">{{ movie.homepage }}</a></div>
+        @if (movie.status) {
+          <div class="detail-item"><strong>Estado:</strong> {{ movie.status }}</div>
+        }
+        @if (movie.original_title && movie.original_title !== movie.title) {
+          <div class="detail-item"><strong>Título Original:</strong> {{ movie.original_title }}</div>
+        }
+        @if (movie.budget) {
+          <div class="detail-item"><strong>Presupuesto:</strong> {{ movie.budget | currency:'USD':'symbol':'1.0-0' }}</div>
+        }
+        @if (movie.revenue) {
+          <div class="detail-item"><strong>Recaudación:</strong> {{ movie.revenue | currency:'USD':'symbol':'1.0-0' }}</div>
+        }
+        @if (movie.production_companies && movie.production_companies.length > 0) {
+          <div class="detail-item">
+            <strong>Compañías Productoras:</strong>
+            <span class="chip-list">@for (company of movie.production_companies; track company) {
+              <span class="chip">{{ company.name }}</span>
+            }</span>
+          </div>
+        }
+        @if (movie.production_countries && movie.production_countries.length > 0) {
+          <div class="detail-item">
+            <strong>Países de Producción:</strong>
+            <span class="chip-list">@for (country of movie.production_countries; track country) {
+              <span class="chip">{{ country.name }}</span>
+            }</span>
+          </div>
+        }
+        @if (movie.spoken_languages && movie.spoken_languages.length > 0) {
+          <div class="detail-item">
+            <strong>Idiomas Hablados:</strong>
+            <span class="chip-list">@for (lang of movie.spoken_languages; track lang) {
+              <span class="chip">{{ lang.english_name }}</span>
+            }</span>
+          </div>
+        }
+        @if (movie.homepage) {
+          <div class="detail-item"><strong>Página Web:</strong> <a [href]="movie.homepage" target="_blank" rel="noopener noreferrer">{{ movie.homepage }}</a></div>
+        }
       </div>
     </section>
-  </ng-container>
-
+  }
   <!-- Detalles de la Serie de TV -->
-  <ng-container *ngIf="tvShow">
+  @if (tvShow) {
     <section class="header-section"
-             [style.background-image]="tvShow.backdrop_path ? 'url(' + getImageUrl(tvShow.backdrop_path) + ')' : null"
-             [class.no-backdrop]="!tvShow.backdrop_path">
+      [style.background-image]="tvShow.backdrop_path ? 'url(' + getImageUrl(tvShow.backdrop_path) + ')' : null"
+      [class.no-backdrop]="!tvShow.backdrop_path">
       <div class="header-overlay">
         <div class="header-content">
           <div class="poster">
-            <img *ngIf="tvShow.poster_path" [src]="getImageUrl(tvShow.poster_path)" [alt]="tvShow.name">
-            <div *ngIf="!tvShow.poster_path" class="no-poster-placeholder">Sin póster</div>
+            @if (tvShow.poster_path) {
+              <img [src]="getImageUrl(tvShow.poster_path)" [alt]="tvShow.name">
+            }
+            @if (!tvShow.poster_path) {
+              <div class="no-poster-placeholder">Sin póster</div>
+            }
           </div>
           <div class="info">
-            <h1>{{ tvShow.name }} <span class="release-year" *ngIf="tvShow.first_air_date">({{ tvShow.first_air_date | date:'yyyy' }})</span></h1>
+            <h1>{{ tvShow.name }} @if (tvShow.first_air_date) {
+              <span class="release-year">({{ tvShow.first_air_date | date:'yyyy' }})</span>
+            }</h1>
             <div class="facts-bar">
-              <span *ngIf="tvShow.first_air_date">{{ tvShow.first_air_date | date:'dd/MM/yyyy' }} ({{tvShow.original_language | uppercase }})</span>
-              <span *ngIf="tvShow.genres && tvShow.genres.length > 0" class="genres">
-                &bull; <ng-container *ngFor="let genre of tvShow.genres; let last = last">{{ genre.name }}{{ !last ? ', ' : '' }}</ng-container>
+              @if (tvShow.first_air_date) {
+                <span>{{ tvShow.first_air_date | date:'dd/MM/yyyy' }} ({{tvShow.original_language | uppercase }})</span>
+              }
+              @if (tvShow.genres && tvShow.genres.length > 0) {
+                <span class="genres">
+                  &bull; @for (genre of tvShow.genres; track genre; let last = $last) {
+                  {{ genre.name }}{{ !last ? ', ' : '' }}
+                }
               </span>
-              <span *ngIf="tvShow.episode_run_time && tvShow.episode_run_time.length > 0">&bull; {{ tvShow.episode_run_time[0] }} min/ep.</span>
-            </div>
-            <div class="user-score" *ngIf="tvShow.vote_average">
+            }
+            @if (tvShow.episode_run_time && tvShow.episode_run_time.length > 0) {
+              <span>&bull; {{ tvShow.episode_run_time[0] }} min/ep.</span>
+            }
+          </div>
+          @if (tvShow.vote_average) {
+            <div class="user-score">
               <strong>Puntuación:</strong> {{ (tvShow.vote_average * 10).toFixed(0) }}% <span>({{tvShow.vote_count}} votos)</span>
             </div>
-            <p class="tagline" *ngIf="tvShow.tagline">{{ tvShow.tagline }}</p>
-            <h3>Resumen</h3>
-            <p class="overview">{{ tvShow.overview || 'No hay resumen disponible.' }}</p>
-          </div>
+          }
+          @if (tvShow.tagline) {
+            <p class="tagline">{{ tvShow.tagline }}</p>
+          }
+          <h3>Resumen</h3>
+          <p class="overview">{{ tvShow.overview || 'No hay resumen disponible.' }}</p>
         </div>
       </div>
-    </section>
-
-    <section class="main-content-section">
-      <div class="details-grid">
-        <div class="detail-item" *ngIf="tvShow.status"><strong>Estado:</strong> {{ tvShow.status }}</div>
-        <div class="detail-item" *ngIf="tvShow.type"><strong>Tipo:</strong> {{ tvShow.type }}</div>
-        <div class="detail-item" *ngIf="tvShow.original_name && tvShow.original_name !== tvShow.name"><strong>Nombre Original:</strong> {{ tvShow.original_name }}</div>
-        <div class="detail-item" *ngIf="tvShow.number_of_seasons"><strong>Temporadas:</strong> {{ tvShow.number_of_seasons }}</div>
-        <div class="detail-item" *ngIf="tvShow.number_of_episodes"><strong>Episodios:</strong> {{ tvShow.number_of_episodes }}</div>
-        <div class="detail-item" *ngIf="tvShow.networks && tvShow.networks.length > 0">
+    </div>
+  </section>
+  <section class="main-content-section">
+    <div class="details-grid">
+      @if (tvShow.status) {
+        <div class="detail-item"><strong>Estado:</strong> {{ tvShow.status }}</div>
+      }
+      @if (tvShow.type) {
+        <div class="detail-item"><strong>Tipo:</strong> {{ tvShow.type }}</div>
+      }
+      @if (tvShow.original_name && tvShow.original_name !== tvShow.name) {
+        <div class="detail-item"><strong>Nombre Original:</strong> {{ tvShow.original_name }}</div>
+      }
+      @if (tvShow.number_of_seasons) {
+        <div class="detail-item"><strong>Temporadas:</strong> {{ tvShow.number_of_seasons }}</div>
+      }
+      @if (tvShow.number_of_episodes) {
+        <div class="detail-item"><strong>Episodios:</strong> {{ tvShow.number_of_episodes }}</div>
+      }
+      @if (tvShow.networks && tvShow.networks.length > 0) {
+        <div class="detail-item">
           <strong>Cadenas:</strong>
-          <span class="chip-list"><span class="chip" *ngFor="let network of tvShow.networks">{{ network.name }}</span></span>
+          <span class="chip-list">@for (network of tvShow.networks; track network) {
+            <span class="chip">{{ network.name }}</span>
+          }</span>
         </div>
-        <div class="detail-item" *ngIf="tvShow.created_by && tvShow.created_by.length > 0">
+      }
+      @if (tvShow.created_by && tvShow.created_by.length > 0) {
+        <div class="detail-item">
           <strong>Creado por:</strong>
-          <span class="chip-list"><span class="chip" *ngFor="let creator of tvShow.created_by">{{ creator.name }}</span></span>
+          <span class="chip-list">@for (creator of tvShow.created_by; track creator) {
+            <span class="chip">{{ creator.name }}</span>
+          }</span>
         </div>
-         <div class="detail-item" *ngIf="tvShow.languages && tvShow.languages.length > 0">
+      }
+      @if (tvShow.languages && tvShow.languages.length > 0) {
+        <div class="detail-item">
           <strong>Idiomas:</strong>
-          <span class="chip-list"><span class="chip" *ngFor="let lang of tvShow.languages">{{ lang | uppercase }}</span></span>
+          <span class="chip-list">@for (lang of tvShow.languages; track lang) {
+            <span class="chip">{{ lang | uppercase }}</span>
+          }</span>
         </div>
-        <div class="detail-item" *ngIf="tvShow.homepage"><strong>Página Web:</strong> <a [href]="tvShow.homepage" target="_blank" rel="noopener noreferrer">{{ tvShow.homepage }}</a></div>
-      </div>
-
-      <div *ngIf="tvShow.seasons && tvShow.seasons.length > 0" class="seasons-section">
+      }
+      @if (tvShow.homepage) {
+        <div class="detail-item"><strong>Página Web:</strong> <a [href]="tvShow.homepage" target="_blank" rel="noopener noreferrer">{{ tvShow.homepage }}</a></div>
+      }
+    </div>
+    @if (tvShow.seasons && tvShow.seasons.length > 0) {
+      <div class="seasons-section">
         <h3>Temporadas</h3>
         <div class="seasons-grid">
-          <mat-card *ngFor="let season of tvShow.seasons" class="season-card">
-            <img mat-card-image *ngIf="season.poster_path" [src]="getImageUrl(season.poster_path)" [alt]="season.name">
-            <div *ngIf="!season.poster_path" class="no-poster-placeholder season-poster-placeholder">Sin póster</div>
-            <mat-card-content>
-              <h4>{{ season.name }}</h4>
-              <p *ngIf="season.air_date">Estreno: {{ season.air_date | date:'dd/MM/yyyy' }}</p>
-              <p>Episodios: {{ season.episode_count }}</p>
-              <p class="season-overview" *ngIf="season.overview">{{ season.overview | slice:0:150 }}{{ season.overview && season.overview.length > 150 ? '...' : '' }}</p>
-            </mat-card-content>
-          </mat-card>
+          @for (season of tvShow.seasons; track season) {
+            <mat-card class="season-card">
+              @if (season.poster_path) {
+                <img mat-card-image [src]="getImageUrl(season.poster_path)" [alt]="season.name">
+              }
+              @if (!season.poster_path) {
+                <div class="no-poster-placeholder season-poster-placeholder">Sin póster</div>
+              }
+              <mat-card-content>
+                <h4>{{ season.name }}</h4>
+                @if (season.air_date) {
+                  <p>Estreno: {{ season.air_date | date:'dd/MM/yyyy' }}</p>
+                }
+                <p>Episodios: {{ season.episode_count }}</p>
+                @if (season.overview) {
+                  <p class="season-overview">{{ season.overview | slice:0:150 }}{{ season.overview && season.overview.length > 150 ? '...' : '' }}</p>
+                }
+              </mat-card-content>
+            </mat-card>
+          }
         </div>
       </div>
-    </section>
-  </ng-container>
-
-  <!-- Acciones Comunes -->
-  <div class="actions-footer" *ngIf="!loading && !error && (movie || tvShow)">
+    }
+  </section>
+}
+<!-- Acciones Comunes -->
+@if (!loading && !error && (movie || tvShow)) {
+  <div class="actions-footer">
     <button mat-stroked-button color="primary" routerLink="/">Volver al listado</button>
   </div>
+}
 </div>
+}

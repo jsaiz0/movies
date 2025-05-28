@@ -11,49 +11,63 @@
         </mat-form-field>
       </form>
 
-      <div *ngIf="searching">
-        <mat-progress-bar class="searching-bar" [mode]="mode">
-        </mat-progress-bar>
-      </div>
-      <div class="paginator-container" *ngIf="totalResults">
-        <span >Total de resultados:</span>
-        <mat-paginator [length]="totalResults"
-          [pageSizeOptions]="[]" [pageSize]="20" (page)="pageChanged($event)"
-          aria-label="Select page">
+      @if (searching) {
+        <div>
+          <mat-progress-bar class="searching-bar" [mode]="mode">
+          </mat-progress-bar>
+        </div>
+      }
+      @if (totalResults) {
+        <div class="paginator-container">
+          <span >Total de resultados:</span>
+          <mat-paginator [length]="totalResults"
+            [pageSizeOptions]="[]" [pageSize]="20" (page)="pageChanged($event)"
+            aria-label="Select page">
           </mat-paginator>
-      </div>
+        </div>
+      }
 
 
-      <mat-list *ngIf="searchResults.length > 0 && !searching">
-        @for (item of searchResults; track item.id) {
-        <mat-list-item>
-          <a [routerLink]="['/details', searchType, item.id]"
-            class="list-item-content">
-            <img *ngIf="item.poster_path"
-              [src]="getUrlImage(item.poster_path)"
-              alt="Póster de {{ item.title || item.name }}" class="item-poster">
-            <!-- Placeholder si no hay imagen -->
-            <div *ngIf="!item.poster_path" class="item-poster no-poster"></div>
-            <div class="item-info">
-              <span class="item-title">{{ item.title || item.name }}</span>
-            </div>
-          </a>
-        </mat-list-item>
-        }
+      @if (searchResults.length > 0 && !searching) {
+        <mat-list>
+          @for (item of searchResults; track item.id) {
+            <mat-list-item>
+              <a [routerLink]="['/details', searchType, item.id]"
+                class="list-item-content">
+                @if (item.poster_path) {
+                  <img
+                    [src]="getUrlImage(item.poster_path)"
+                    alt="Póster de {{ item.title || item.name }}" class="item-poster">
+                }
+                <!-- Placeholder si no hay imagen -->
+                @if (!item.poster_path) {
+                  <div class="item-poster no-poster"></div>
+                }
+                <div class="item-info">
+                  <span class="item-title">{{ item.title || item.name }}</span>
+                </div>
+              </a>
+            </mat-list-item>
+          }
         </mat-list>
+      }
 
-      <p
-        *ngIf="searched && !searching && searchResults.length === 0 && searchText.trim().length > 0 && !error">
+      @if (searched && !searching && searchResults.length === 0 && searchText.trim().length > 0 && !error) {
+        <p
+          >
         No se encontraron resultados para "{{ searchText }}".</p>
+      }
 
-      <div *ngIf="!searching && error">
-        <mat-card class="error-card">
-          <mat-card-title>Error</mat-card-title>
-          <mat-card-content>
-            <p>{{ error }}</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
+      @if (!searching && error) {
+        <div>
+          <mat-card class="error-card">
+            <mat-card-title>Error</mat-card-title>
+            <mat-card-content>
+              <p>{{ error }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
 
     </mat-tab>
     <mat-tab label="Series de TV" value="tv">
@@ -66,50 +80,63 @@
         </mat-form-field>
       </form>
 
-      <div *ngIf="searching">
-        <mat-progress-bar class="searching-bar"
+      @if (searching) {
+        <div>
+          <mat-progress-bar class="searching-bar"
           [mode]="mode"></mat-progress-bar>
-      </div>
+        </div>
+      }
 
-      <div class="paginator-container" *ngIf="totalResults">
-        <span>Total de resultados:</span>
-        <mat-paginator [length]="totalResults" [pageSizeOptions]="[]" [pageSize]="20"
-          (page)="pageChanged($event)" aria-label="Select page">
-        </mat-paginator>
-      </div>
+      @if (totalResults) {
+        <div class="paginator-container">
+          <span>Total de resultados:</span>
+          <mat-paginator [length]="totalResults" [pageSizeOptions]="[]" [pageSize]="20"
+            (page)="pageChanged($event)" aria-label="Select page">
+          </mat-paginator>
+        </div>
+      }
 
-      <mat-list *ngIf="searchResults.length > 0 && !searching">
-        @for (item of searchResults; track item.id) {
-        <mat-list-item>
-          <a [routerLink]="['/details', searchType, item.id]"
-            class="list-item-content">
-            <!-- Opcional: Imagen del póster -->
-            <img *ngIf="item.poster_path"
-              [src]="getUrlImage(item.poster_path)"
-              alt="Póster de {{ item.title || item.name }}" class="item-poster">
-            <!-- Placeholder si no hay imagen -->
-            <div *ngIf="!item.poster_path" class="item-poster no-poster"></div>
-
-            <div class="item-info">
-              <span class="item-title">{{ item.title || item.name }}</span>
-            </div>
-          </a>
-        </mat-list-item>
-        }
+      @if (searchResults.length > 0 && !searching) {
+        <mat-list>
+          @for (item of searchResults; track item.id) {
+            <mat-list-item>
+              <a [routerLink]="['/details', searchType, item.id]"
+                class="list-item-content">
+                <!-- Opcional: Imagen del póster -->
+                @if (item.poster_path) {
+                  <img
+                    [src]="getUrlImage(item.poster_path)"
+                    alt="Póster de {{ item.title || item.name }}" class="item-poster">
+                }
+                <!-- Placeholder si no hay imagen -->
+                @if (!item.poster_path) {
+                  <div class="item-poster no-poster"></div>
+                }
+                <div class="item-info">
+                  <span class="item-title">{{ item.title || item.name }}</span>
+                </div>
+              </a>
+            </mat-list-item>
+          }
         </mat-list>
+      }
 
-      <p
-        *ngIf="searched && !searching && searchResults.length === 0 && searchText.trim().length > 0 && !error">
+      @if (searched && !searching && searchResults.length === 0 && searchText.trim().length > 0 && !error) {
+        <p
+          >
         No se encontraron resultados para "{{ searchText }}".</p>
+      }
 
-      <div *ngIf="!searching && error">
-        <mat-card class="error-card">
-          <mat-card-title>Error</mat-card-title>
-          <mat-card-content>
-            <p>{{ error }}</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
+      @if (!searching && error) {
+        <div>
+          <mat-card class="error-card">
+            <mat-card-title>Error</mat-card-title>
+            <mat-card-content>
+              <p>{{ error }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
 
     </mat-tab>
   </mat-tab-group>
