@@ -1,72 +1,71 @@
-# Movies
+# Movies App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+## Descripción
 
-## Instalar proyecto
+Esta aplicación muestra una lista de películas populares y permite a los usuarios ver detalles de cada película. Utiliza la API de [The Movie Database (TMDB)](https://www.themoviedb.org/) para obtener los datos de las películas.
 
-[Documentacion bun](https://bun.sh/docs/installation)
+## Capturas de Pantalla
 
-```
-git clone https://github.com/jsaiz0/movies.git
+*(Aquí puedes agregar capturas de pantalla de tu aplicación)*
 
-cd movies
+### Lista de Películas
+<!-- ![Placeholder Lista de Películas](URL_A_TU_CAPTURA_LISTA_PELICULAS) -->
 
-curl -fsSL https://bun.sh/install | bash
+### Detalles de Película
+<!-- ![Placeholder Detalles de Película](URL_A_TU_CAPTURA_DETALLES_PELICULA) -->
 
-bun install
-```
-## Development server
+## Prerrequisitos
 
-To start a local development server, run:
+Antes de comenzar, asegúrate de tener instalado lo siguiente:
+- [Node.js](https://nodejs.org/) (que incluye npm)
+- [Angular CLI](https://angular.io/cli): `npm install -g @angular/cli`
 
-```bash
-ng serve -o
-```
+## Instalación
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1.  **Clona el repositorio:**
+    ```bash
+    git clone <URL_DEL_REPOSITORIO_DE_TU_PROYECTO>
+    cd movies
+    ```
 
-## Code scaffolding
+2.  **Instala las dependencias:**
+    ```bash
+    npm install
+    ```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+3.  **Configura la API Key de TMDB:**
+    Crea un archivo `env.ts` dentro de la carpeta `src/app/env/` con el siguiente contenido, reemplazando `<TU_API_KEY_DE_TMDB>` con tu clave de API real:
+    ```typescript
+    // src/app/env/env.ts
+    export const env = {
+      // Ejemplo: production: false, (si tienes otras variables de entorno)
+      apiKey: '<TU_API_KEY_DE_TMDB>'
+    };
+    ```
+    Puedes obtener una API key registrándote en TMDB.
 
-```bash
-ng generate component component-name
-```
+4.  **Ejecuta la aplicación en modo de desarrollo:**
+    ```bash
+    ng serve
+    ```
+    Navega a `http://localhost:4200/`. La aplicación se recargará automáticamente si cambias alguno de los archivos fuente.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Cómo Funciona
 
-```bash
-ng generate --help
-```
+La aplicación está construida con Angular y utiliza varios componentes y servicios para funcionar:
 
-## Building
+-   **`AppComponent`**: Es el componente raíz de la aplicación y el `<router-outlet>` donde se cargan los demás componentes según la ruta.
+-   **`MovieListComponent`**: Muestra una lista de películas (posiblemente paginada) obtenidas de TMDB. Cada película en la lista es un enlace a su vista de detalle.
+-   **`MovieDetailComponent`**: Muestra información detallada sobre una película específica, como su sinopsis, fecha de lanzamiento, calificación, póster, etc.
+-   **`MovieService`**: Este servicio es responsable de realizar las llamadas a la API de TMDB para obtener la lista de películas y los detalles de una película específica. Utiliza la `apiKey` configurada en `src/app/env/env.ts`.
+-   **Enrutamiento**: Angular Router se utiliza para gestionar la navegación entre la lista de películas y las vistas de detalle de cada película. Las rutas principales se definen en `src/app/app.routes.ts`.
+-   **Estilos**: La aplicación utiliza Angular Material para los componentes de la interfaz de usuario y tiene un tema personalizado definido en `src/movie-theme.scss` y aplicado globalmente en `src/styles.scss`.
 
-To build the project run:
+### Flujo Básico:
+1.  El usuario accede a la aplicación, generalmente a la ruta raíz que muestra `MovieListComponent`.
+2.  `MovieListComponent` utiliza `MovieService` para solicitar una lista de películas populares a la API de TMDB.
+3.  Las películas se muestran en una lista.
+4.  El usuario puede hacer clic en una película para navegar a la vista de detalles (`MovieDetailComponent`).
+5.  `MovieDetailComponent` obtiene el ID de la película de los parámetros de la ruta y utiliza `MovieService` para solicitar los detalles completos de esa película a TMDB.
+6.  Se muestra la información detallada de la película.
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
