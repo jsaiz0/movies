@@ -1,78 +1,116 @@
 <div class="movie-list-container">
-  <mat-tab-group (selectedIndexChange)="toggleSearchType($event)" mat-stretch-tabs="false" mat-align-tabs="center">
+  <mat-tab-group (selectedIndexChange)="toggleSearchType($event)"
+    mat-stretch-tabs="false" mat-align-tabs="center">
     <mat-tab label="Películas" value="movie">
       <form class="search-form">
         <mat-form-field appearance="outline">
           <mat-label>Buscar título</mat-label>
-          <input
-          matInput
-          name="searchInput"
-          [ngModel]="searchText"
-          type="text"
-          placeholder="Escribe para empezar a buscar..."
-          (input)="search($event)"
-          autocomplete="off">
+          <input matInput name="searchInput" [(ngModel)]="searchText"
+            type="text" placeholder="Escribe para empezar a buscar..."
+            (ngModelChange)="search($event)" autocomplete="off">
         </mat-form-field>
       </form>
-      <mat-list *ngIf="searchResults.length > 0">
-        @for (item of searchResults; track item) {
-        <mat-list-item>
 
-          <a [routerLink]="['/details', searchType, item.id]">
-            {{ item.title || item.name }}
-          </a>
-
-        </mat-list-item> }
-      </mat-list>
       <div *ngIf="searching">
         <mat-progress-bar class="searching-bar" [mode]="mode">
         </mat-progress-bar>
       </div>
-      <p *ngIf="searched && searchResults.length === 0 && searchTerm">No se
-        encontraron
-        resultados.</p>
+      <div class="paginator-container" *ngIf="totalResults">
+        <span >Total de resultados:</span>
+        <mat-paginator [length]="totalResults"
+          [pageSizeOptions]="[]" [pageSize]="20" (page)="pageChanged($event)"
+          aria-label="Select page">
+          </mat-paginator>
+      </div>
 
-      <mat-paginator *ngIf="totalResults" [length]="totalResults" [pageSize]="20"
-        (page)="pageChanged($event)" aria-label="Select page">
-      </mat-paginator>
+
+      <mat-list *ngIf="searchResults.length > 0 && !searching">
+        @for (item of searchResults; track item.id) {
+        <mat-list-item>
+          <a [routerLink]="['/details', searchType, item.id]"
+            class="list-item-content">
+            <img *ngIf="item.poster_path"
+              [src]="getUrlImage(item.poster_path)"
+              alt="Póster de {{ item.title || item.name }}" class="item-poster">
+            <!-- Placeholder si no hay imagen -->
+            <div *ngIf="!item.poster_path" class="item-poster no-poster"></div>
+            <div class="item-info">
+              <span class="item-title">{{ item.title || item.name }}</span>
+            </div>
+          </a>
+        </mat-list-item>
+        }
+        </mat-list>
+
+      <p
+        *ngIf="searched && !searching && searchResults.length === 0 && searchText.trim().length > 0 && !error">
+        No se encontraron resultados para "{{ searchText }}".</p>
+
+      <div *ngIf="!searching && error">
+        <mat-card class="error-card">
+          <mat-card-title>Error</mat-card-title>
+          <mat-card-content>
+            <p>{{ error }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
     </mat-tab>
     <mat-tab label="Series de TV" value="tv">
       <form class="search-form">
         <mat-form-field appearance="outline">
           <mat-label>Buscar título</mat-label>
-          <input
-          matInput
-          name="searchInput"
-          [ngModel]="searchText"
-          type="text"
-          placeholder="Escribe para empezar a buscar..."
-          (input)="search($event)"
-          autocomplete="off">
+          <input matInput name="searchInput" [(ngModel)]="searchText"
+            type="text" placeholder="Escribe para empezar a buscar..."
+            (ngModelChange)="search($event)" autocomplete="off">
         </mat-form-field>
       </form>
-      <mat-list *ngIf="searchResults.length > 0">
-        @for (item of searchResults; track item) {
-        <mat-list-item>
 
-          <a [routerLink]="['/details', searchType, item.id]">
-            {{ item.title || item.name }}
-          </a>
-
-        </mat-list-item>
-        }
-      </mat-list>
       <div *ngIf="searching">
-        <mat-progress-bar class="searching-bar" [mode]="mode"></mat-progress-bar>
+        <mat-progress-bar class="searching-bar"
+          [mode]="mode"></mat-progress-bar>
       </div>
 
-      <p *ngIf="searched && searchResults.length === 0 && searchTerm">
-        No se encontraron resultados.
-      </p>
+      <div class="paginator-container" *ngIf="totalResults">
+        <span>Total de resultados:</span>
+        <mat-paginator [length]="totalResults" [pageSizeOptions]="[]" [pageSize]="20"
+          (page)="pageChanged($event)" aria-label="Select page">
+        </mat-paginator>
+      </div>
 
-      <mat-paginator *ngIf="totalResults" [length]="totalResults" [pageSize]="20"
-        (page)="pageChanged($event)" aria-label="Select page">
-      </mat-paginator>
+      <mat-list *ngIf="searchResults.length > 0 && !searching">
+        @for (item of searchResults; track item.id) {
+        <mat-list-item>
+          <a [routerLink]="['/details', searchType, item.id]"
+            class="list-item-content">
+            <!-- Opcional: Imagen del póster -->
+            <img *ngIf="item.poster_path"
+              [src]="getUrlImage(item.poster_path)"
+              alt="Póster de {{ item.title || item.name }}" class="item-poster">
+            <!-- Placeholder si no hay imagen -->
+            <div *ngIf="!item.poster_path" class="item-poster no-poster"></div>
+
+            <div class="item-info">
+              <span class="item-title">{{ item.title || item.name }}</span>
+            </div>
+          </a>
+        </mat-list-item>
+        }
+        </mat-list>
+
+      <p
+        *ngIf="searched && !searching && searchResults.length === 0 && searchText.trim().length > 0 && !error">
+        No se encontraron resultados para "{{ searchText }}".</p>
+
+      <div *ngIf="!searching && error">
+        <mat-card class="error-card">
+          <mat-card-title>Error</mat-card-title>
+          <mat-card-content>
+            <p>{{ error }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
     </mat-tab>
   </mat-tab-group>
 </div>

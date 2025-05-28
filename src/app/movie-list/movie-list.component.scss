@@ -1,12 +1,13 @@
 .movie-list-container {
   padding: 25px;
-    max-width: 1200px;
-    margin: auto;
+  max-width: 1200px;
+  margin: auto;
 }
 
 .search-form {
   text-align: center;
 }
+
 mat-form-field {
   width: 50%;
   margin: auto;
@@ -22,5 +23,147 @@ mat-list-item {
 
   &:hover {
     background-color: #f5f5f5;
+  }
+}
+
+:host ::ng-deep .mat-mdc-paginator-outer-container {
+  .mat-mdc-paginator-container {
+    justify-content: center;
+  }
+
+  .mat-mdc-paginator-page-size {
+    display: none;
+  }
+}
+
+:host {
+  display: block;
+  padding: 16px;
+}
+
+.search-form {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+
+  mat-form-field {
+    width: 100%;
+    max-width: 600px;
+  }
+}
+
+.searching-bar {
+  margin-bottom: 16px;
+}
+
+mat-paginator {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  background-color: var(--mat-sys-surface-container-lowest);
+  border-radius: 4px;
+}
+
+mat-list {
+  padding: 0;
+
+  mat-list-item {
+    height: auto !important;
+    padding: 12px 8px !important;
+    margin-bottom: 12px;
+    background-color: var(--mat-sys-surface-container-low);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .list-item-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .item-poster {
+      width: 60px;
+      height: 90px; // Mantén la proporción
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 16px;
+      flex-shrink: 0; // Evita que la imagen se encoja
+      background-color: var(--mat-sys-surface-container-highest);
+
+      &.no-poster {
+        background-image: url(../../../public/no-poster.svg);
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+    }
+
+    .item-info {
+      flex-grow: 1; // Permite que esta sección ocupe el espacio restante
+      overflow: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--mat-sys-on-surface);
+      display: block;
+      width: 100%;
+
+      .item-title {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 4px;
+        display: block;
+      }
+
+      .item-details {
+        font-size: 0.85rem;
+        color: var(--mat-sys-on-surface-variant);
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+p[matListItemTitle]+p,
+p[ngIf*="searchResults.length === 0"] {
+  text-align: center;
+  padding: 20px;
+  color: var(--mat-sys-on-surface-variant);
+  font-style: italic;
+}
+
+// Estilos para la tarjeta de error (ya tienes algunos globales, puedes complementarlos aquí si es necesario)
+.error-card {}
+
+@media (max-width: 600px) {
+  :host {
+    padding: 8px;
+  }
+
+  .search-form mat-form-field {
+    font-size: 0.9rem;
+  }
+
+  mat-list mat-list-item {
+    padding: 8px !important;
+
+    .item-poster {
+      width: 50px;
+      height: 75px;
+      margin-right: 12px;
+    }
+
+    a .item-title {
+      font-size: 1rem;
+    }
+
+    a .item-details {
+      font-size: 0.8rem;
+    }
   }
 }

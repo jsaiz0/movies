@@ -3,18 +3,81 @@
 @include mat.core(); // Include core Material styles
 @import "@angular/material/prebuilt-themes/magenta-violet.css";
 
-html {
+body {
   color-scheme: light dark;
   @include mat.theme((color: mat.$violet-palette,
-      typography: Roboto,
       density: 0));
-      background: var(--mat-sys-primary-container);
-        color: var(--mat-sys-on-primary-container);
-        border: 1px solid var(--mat-sys-outline-variant);
-        font: var(--mat-sys-body-large);
-}
+  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  background: #fff;
+  color: #000;
+  font: var(--mat-sys-body-large);
 
-body {
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  .main-title {
+    background-color: #888888;
+
+    h1 {
+      font-weight: inherit;
+    }
+
+    a {
+      color: #fff;
+    }
+  }
+
+  .main-container {
+    max-width: 1200px;
+    margin: 25px auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #eee9e9;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(10, 6, 0, 0.05);
+
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--mat-sys-primary);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .error-card {
+      width: 50%;
+      margin: auto;
+      padding: 50px;
+      background-color: var(--mat-sys-error-container);
+      color: #721c24;
+      padding: 16px;
+      border-radius: 4px;
+
+      mat-card-title {
+        margin-bottom: 20px;
+      }
+
+      .mat-mdc-card-content {
+        text-align: center;
+      }
+
+    }
+  }
 }

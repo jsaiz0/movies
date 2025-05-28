@@ -1,41 +1,287 @@
-.movie-detail-container {
-  padding: 16px;
-  margin: auto;
-  max-width: 1200px;
+:host {
   display: block;
+  margin-bottom: 2rem;
 }
 
-mat-card {
-  margin-bottom: 16px;
+.detail-page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
 }
 
-mat-card-title {
-  font-size: 24px;
+.header-section {
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+  color: #fff;
+
+  &.no-backdrop {
+    background-color: #333;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-mat-card-content {
-  margin-bottom: 16px;
+.header-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 2rem 1rem;
+
+  @media (min-width: 768px) {
+    padding: 3rem 2rem;
+  }
 }
 
-mat-list {
-  margin-bottom: 16px;
-}
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 
-.error-card {
-  width: 50%;
-  margin: auto;
-  padding: 50px;
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 16px;
-  border-radius: 4px;
-
-  mat-card-title {
-    margin-bottom: 20px;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
   }
 
-  .mat-mdc-card-content {
-    text-align: center;
+  .poster {
+    flex-shrink: 0;
+    width: 150px;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .no-poster-placeholder {
+      width: 150px;
+      height: 225px;
+      background-color: #444;
+      color: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+
+    @media (min-width: 768px) {
+      width: 200px;
+
+      .no-poster-placeholder {
+        width: 200px;
+        height: 300px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      width: 300px;
+
+      .no-poster-placeholder {
+        width: 300px;
+        height: 450px;
+      }
+    }
   }
 
+  .info {
+    flex-grow: 1;
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+
+      .release-year {
+        font-size: 1.5rem;
+        font-weight: normal;
+        opacity: 0.8;
+      }
+    }
+
+    .facts-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+
+      span {
+        display: inline-block;
+      }
+    }
+
+    .user-score {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+
+      strong {
+        font-weight: bold;
+      }
+
+      span {
+        font-size: 0.8rem;
+        opacity: 0.8;
+      }
+    }
+
+    .tagline {
+      font-style: italic;
+      opacity: 0.85;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 0.3rem;
+    }
+
+    .overview {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  }
 }
+
+.main-content-section {
+  padding: 1.5rem 1rem;
+  background-color: #f9f9f9;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+  }
+
+  .details-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .detail-item {
+      background-color: #fff;
+      padding: 0.8rem 1rem;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      strong {
+        display: block;
+        margin-bottom: 0.3rem;
+        color: #555;
+      }
+
+      a {
+        color: var(--mat-primary-500-contrast-color, #007bff);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+
+    .chip {
+      background-color: #e0e0e0;
+      padding: 0.2rem 0.6rem;
+      border-radius: 16px;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.seasons-section {
+  margin-top: 2rem;
+
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .seasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .season-card {
+    mat-card-image {
+      aspect-ratio: 2/3;
+      object-fit: cover;
+    }
+
+    .no-poster-placeholder.season-poster-placeholder {
+      width: 100%;
+      height: 0;
+      padding-bottom: 150%;
+      background-color: #e0e0e0;
+      color: #777;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+
+    mat-card-content {
+      padding: 0.8rem;
+
+      h4 {
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+        color: #666;
+      }
+
+      .season-overview {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        max-height: 60px;
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+
+.actions-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-top: 1px solid #eee;
+  margin-top: 1rem;
+}
+

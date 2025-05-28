@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MovieService } from '../movie.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, of, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
@@ -9,9 +9,9 @@ import { MovieListItem, PagedResponse } from '@app/movie-interfaces';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'; // Import MatPaginatorModule
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ProgressBarMode, MatProgressBarModule } from '@angular/material/progress-bar';
-import { RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 
 /**
  * Componente encargado de mostrar una lista de películas o programas de TV.
@@ -20,7 +20,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-movie-list',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatTabsModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressBarModule, RouterModule],
+  imports: [FormsModule, CommonModule, MatTabsModule, MatInputModule, MatListModule, MatPaginatorModule, MatProgressBarModule, RouterModule, MatCardModule],
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.scss'],
 })
@@ -86,6 +86,12 @@ export class MovieListComponent implements OnInit {
   protected mode: ProgressBarMode = 'indeterminate';
 
   /**
+ * Almacena mensajes de error si ocurre algún problema durante la carga de datos.
+ * @type {string | null}
+ */
+  error: string | null = null;
+
+  /**
    * Constructor del componente.
    * @param {MovieService} movieService - Servicio para interactuar con la API de películas.
    * @param {Router} router - Servicio de enrutamiento de Angular para la navegación.
@@ -99,23 +105,32 @@ export class MovieListComponent implements OnInit {
   ngOnInit(): void {
     this.searchTerm
       .pipe(
-        debounceTime(300), // Espera 300ms después de cada pulsación de tecla
-        distinctUntilChanged(), // Solo emite si el término de búsqueda actual es diferente del anterior
-        tap(term => { // Efecto secundario para manejar el estado de búsqueda y reseteos
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap(term => {
           const trimmedTerm = term.trim();
           if (!trimmedTerm) {
             this.resetSearchState();
           } else {
             this.searching = true;
+            this.page = 1;
           }
         }),
-        switchMap((term: string) => this.executeSearch(term.trim(), this.page))
+        switchMap((term: string) => {
+          return this.executeSearch(term.trim(), this.page);
+        })
       )
       .subscribe({
-        next: response => this.handleSearchResponse(response),
-        error: err => this.handleSearchError(err)
+        next: response => {
+          this.handleSearchResponse(response);
+        },
+        error: err => {
+          this.handleSearchError(err);
+        }
       });
   }
+
+
 
   /**
    * Ejecuta la búsqueda de películas o programas de TV.
@@ -144,6 +159,7 @@ export class MovieListComponent implements OnInit {
     this.searchResults = response.results; // Almacena los resultados.
     this.totalResults = response.total_results; // Almacena el total de resultados.
     this.searched = this.searchText.trim().length > 0; // Marca que se ha realizado una búsqueda si hay texto.
+    this.cdr.detectChanges();
   }
 
   /**
@@ -158,6 +174,8 @@ export class MovieListComponent implements OnInit {
     this.totalResults = 0; // Resetea el total de resultados.
     // Indica que se intentó una búsqueda.
     this.searched = this.searchText.trim().length > 0;
+    this.error = 'Error en la búsqueda. Por favor, inténtalo de nuevo.';
+    this.cdr.detectChanges();
   }
 
   /**
@@ -169,7 +187,6 @@ export class MovieListComponent implements OnInit {
     this.searchResults = [];
     this.totalResults = 0;
     this.searched = false;
-    // this.searchText = ''; // No es necesario limpiar searchText aquí, ya que el binding [(ngModel)] lo maneja.
   }
 
   /**
@@ -178,9 +195,8 @@ export class MovieListComponent implements OnInit {
    * @param {Event} event - El evento de input del campo de búsqueda.
    */
   search(event: Event): void {
-    this.searchText = (event.target as HTMLInputElement).value; // Actualiza el texto de búsqueda.
-    this.searchTerm.next(this.searchText); // Emite el nuevo término de búsqueda.
-    this.page = 1; // Resetea la página a 1 en cada nueva búsqueda.
+    this.searching = true; // Marca que se está realizando una búsqueda.
+    this.searchTerm.next(this.searchText); // Emite el valor de this.searchText (actualizado por ngModel).
   }
 
   /**
@@ -213,5 +229,10 @@ export class MovieListComponent implements OnInit {
         response => this.handleSearchResponse(response), // Maneja la respuesta.
         error => this.handleSearchError(error) // Maneja errores.
       );
+  }
+
+  getUrlImage(poster_path: string){
+    return this.movieService.getImageUrl(poster_path);
+
   }
 }
