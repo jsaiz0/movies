@@ -231,7 +231,7 @@ export class MovieListComponent implements OnInit {
       );
   }
 
-  getUrlImage(poster_path: string){
+  getUrlImage(poster_path: string) {
     return this.movieService.getImageUrl(poster_path);
 
   }
