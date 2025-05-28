@@ -1,83 +1,143 @@
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
+@use 'movie-theme.scss' as movie-theme; // Import your theme colors
 @include mat.core(); // Include core Material styles
-@import "@angular/material/prebuilt-themes/magenta-violet.css";
-
-body {
-  color-scheme: light dark;
-  @include mat.theme((color: mat.$violet-palette,
-      density: 0));
-  font-family: "Source Sans Pro", Arial, sans-serif;
-  font-size: 1rem;
-  -webkit-font-smoothing: antialiased;
-  background: #fff;
-  color: #000;
-  font: var(--mat-sys-body-large);
-
-  .main-title {
-    background-color: #888888;
-
-    h1 {
-      font-weight: inherit;
-    }
-
-    a {
-      color: #fff;
-    }
-  }
-
-  .main-container {
-    max-width: 1200px;
-    margin: 25px auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #eee9e9;
-    border-radius: 15px;
-    box-shadow: 0 2px 4px rgba(10, 6, 0, 0.05);
 
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin-top: 1.5rem;
-      margin-bottom: 0.8rem;
-      font-weight: 500;
-    }
+$primario: #000;
+$secundario: #f8f8f8;
 
-    p {
-      margin-bottom: 1rem;
-      line-height: 1.6;
-    }
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: movie-theme.$primary-palette,
+        tertiary: movie-theme.$tertiary-palette
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
 
-    a {
-      color: var(--mat-sys-primary);
-      text-decoration: none;
 
-      &:hover {
-        text-decoration: underline;
+  body {
+    color-scheme: light dark;
+    font-family: "Source Sans Pro", Arial, sans-serif;
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    background: var(--mat-sys-background-body);
+    font: var(--mat-sys-body-large);
+    margin: 0;
+
+    .main-title {
+      h1 {
+        font-weight: inherit;
+      }
+
+      a {
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
-    .error-card {
-      width: 50%;
-      margin: auto;
-      padding: 50px;
-      background-color: var(--mat-sys-error-container);
-      color: #721c24;
-      padding: 16px;
-      border-radius: 4px;
+    .main-container {
+      max-width: 1200px;
+      margin: 25px auto;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: var(--mat-sys-surface-container-low);
 
-      mat-card-title {
-        margin-bottom: 20px;
+      .mat-mdc-tab-label-container {
+        border: 0;
       }
 
-      .mat-mdc-card-content {
-        text-align: center;
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
       }
 
+      p {
+        margin-bottom: 1rem;
+        line-height: 1.6;
+      }
+
+      a {
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .error-card {
+        width: 50%;
+        margin: auto;
+        padding: 50px;
+        background-color: var(--mat-sys-error-container);
+        color: var(--mat-sys-error);
+        padding: 16px;
+        border-radius: 4px;
+
+        mat-card-title {
+          margin-bottom: 20px;
+        }
+
+        .mat-mdc-card-content {
+          text-align: center;
+        }
+
+      }
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: var(--mat-sys-on-primary-container);
+      padding: 16px 24px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      color: var(--mat-sys-tertiary);
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+
+    @media (max-width: 640px) {
+      .logo-container {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 18px;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .logo-text {
+        font-size: 1.8rem;
+      }
     }
   }
 }
