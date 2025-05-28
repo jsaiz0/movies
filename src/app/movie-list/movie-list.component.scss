@@ -23,6 +23,8 @@
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
+  text-align: center;
+
 
   mat-form-field {
     width: 100%;
@@ -79,7 +81,7 @@ mat-list {
       background-color: var(--mat-sys-surface-container-highest);
 
       &.no-poster {
-        background-image: url(../../../public/no-poster.svg);
+        background-image: url(public/no-poster.svg);
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;

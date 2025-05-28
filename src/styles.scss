@@ -8,12 +8,8 @@ $primario: #000;
 $secundario: #f8f8f8;
 
 html {
-  @include mat.theme(
-    (
-      color: (
-        primary: movie-theme.$primary-palette,
-        tertiary: movie-theme.$tertiary-palette
-      ),
+  @include mat.theme((color: (primary: movie-theme.$primary-palette,
+        tertiary: movie-theme.$tertiary-palette ),
       typography: Roboto,
       density: 0,
     ));
@@ -99,12 +95,22 @@ html {
 
     .logo-container {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      background-color: var(--mat-sys-on-primary-container);
-      padding: 16px 24px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
       transition: transform 0.3s ease-in-out;
+      text-align: center;
+      width: 100%;
+      margin: 0 auto;
+      flex-wrap: nowrap;
+      justify-content: center;
+      height: auto;
+
+      a {
+        width: 500px;
+      }
+
+      svg {
+        position: relative;
+        top: 15%;
+      }
     }
 
     .logo-icon {
