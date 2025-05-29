@@ -226,7 +226,7 @@
                 }
                 <p>Episodios: {{ season.episode_count }}</p>
                 @if (season.overview) {
-                  <p class="season-overview">{{ season.overview | slice:0:150 }}{{ season.overview && season.overview.length > 150 ? '...' : '' }}</p>
+                  <p class="season-overview">{{ season.overview }}</p>
                 }
               </mat-card-content>
             </mat-card>
