@@ -2,7 +2,6 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { By } from '@angular/platform-browser';
-import { Component } from '@angular/core';
 
 // Mock a minimal app-root.component.ts if it's not provided
 // For the purpose of this test, we assume app.component.ts exists
