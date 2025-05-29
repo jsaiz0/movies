@@ -57,7 +57,7 @@ describe('MovieListComponent', () => {
     await TestBed.configureTestingModule({
       // El componente es standalone, así que se importa directamente.
       // Los módulos de Angular Material también se importan aquí porque son parte del `imports` del componente.
-      declarations: [MovieListComponent],
+      declarations: [],
       imports: [
         FormsModule, // Necesario para ngModel
         NoopAnimationsModule, // Para componentes de Material que podrían tener animaciones
@@ -67,6 +67,7 @@ describe('MovieListComponent', () => {
         MatPaginatorModule,
         MatProgressBarModule,
         MatCardModule,
+        MovieListComponent
       ],
       providers: [
         provideRouter([]), // Configuración básica para el router. Puedes pasar rutas mock si las necesitas.
