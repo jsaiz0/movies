@@ -35,7 +35,7 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
     cd movies
     ```
 2.  **Instala las dependencias:**
-La Instalación de dependencias se ha usado bun por su eficiencia y rapidez, pero se puede utilizar igualmente npm que es el método más común.
+La Instalación de dependencias se ha usado [Bun.sh](https://bun.sh/) por su eficiencia y rapidez, pero se puede utilizar igualmente npm que es el método más común.
 
 - Método NPM
     ```bash
