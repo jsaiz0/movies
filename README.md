@@ -5,14 +5,21 @@
 Esta aplicación muestra una lista de películas populares y permite a los usuarios ver detalles de cada película. Utiliza la API de [The Movie Database (TMDB)](https://www.themoviedb.org/) para obtener los datos de las películas.
 
 ## Capturas de Pantalla
+### Pantalla de inicio
 
-*(Aquí puedes agregar capturas de pantalla de tu aplicación)*
+![alt text](image-3.png)
 
 ### Lista de Películas
-<!-- ![Placeholder Lista de Películas](URL_A_TU_CAPTURA_LISTA_PELICULAS) -->
+![alt text](image-1.png)
 
 ### Detalles de Película
-<!-- ![Placeholder Detalles de Película](URL_A_TU_CAPTURA_DETALLES_PELICULA) -->
+![alt text](image-2.png)
+
+### Lista de Series
+![alt text](image-4.png)
+
+### Detalles de Serie
+![alt text](image-5.png)
 
 ## Prerrequisitos
 
@@ -24,13 +31,21 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone <URL_DEL_REPOSITORIO_DE_TU_PROYECTO>
+    git clone https://github.com/jsaiz0/movies
     cd movies
     ```
-
 2.  **Instala las dependencias:**
+La Instalación de dependencias se ha usado bun por su eficiencia y rapidez, pero se puede utilizar igualmente npm que es el método más común.
+
+- Método NPM
     ```bash
     npm install
+    ```
+ - Método BUN
+    ```bash
+    curl -fsSL https://bun.sh/install | bash
+
+    bun install
     ```
 
 3.  **Configura la API Key de TMDB:**
@@ -46,7 +61,7 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
 4.  **Ejecuta la aplicación en modo de desarrollo:**
     ```bash
-    ng serve
+    ng serve -o
     ```
     Navega a `http://localhost:4200/`. La aplicación se recargará automáticamente si cambias alguno de los archivos fuente.
 
