@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { MovieDetail, MovieListItem, MovieSearchResult, TVShowDetail, PagedResponse } from './movie-interfaces';
+import { MovieDetail, MovieListItem, TVShowDetail, PagedResponse } from './movie-interfaces';
 import { environment } from './env/env';
 
 /**
