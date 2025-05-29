@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { MovieService } from '../movie.service';
-import { Router, RouterModule } from '@angular/router';
-import { Subject, of, Observable } from 'rxjs';
-import { debounceTime, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {MovieService} from '../movie.service';
+import {Router, RouterModule} from '@angular/router';
+import {Observable, of, Subject, Subscription} from 'rxjs';
+import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {FormsModule} from '@angular/forms';
 
-import { MovieListItem, PagedResponse } from '@app/movie-interfaces';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { ProgressBarMode, MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatCardModule } from '@angular/material/card';
+import {MovieListItem, PagedResponse} from '@app/movie-interfaces';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import {MatProgressBarModule, ProgressBarMode} from '@angular/material/progress-bar';
+import {MatCardModule} from '@angular/material/card';
 
 /**
  * Componente encargado de mostrar una lista de películas o programas de TV.
@@ -24,13 +24,13 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.scss'],
 })
-export class MovieListComponent implements OnInit {
+export class MovieListComponent implements OnInit, OnDestroy {
   /**
    * Subject de RxJS para manejar los términos de búsqueda introducidos por el usuario.
    * Actúa como un observable que emite los términos de búsqueda.
    * @type {Subject<string>}
    */
-  searchTerm = new Subject<string>();
+  searchTerm: Subject<string> = new Subject<string>();
 
   /**
    * Array para almacenar los resultados de la búsqueda (películas o programas de TV).
@@ -86,9 +86,9 @@ export class MovieListComponent implements OnInit {
   mode: ProgressBarMode = 'indeterminate';
 
   /**
- * Almacena mensajes de error si ocurre algún problema durante la carga de datos.
- * @type {string | null}
- */
+   * Almacena mensajes de error si ocurre algún problema durante la carga de datos.
+   * @type {string | null}
+   */
   error: string | null = null;
 
   /**
@@ -97,13 +97,22 @@ export class MovieListComponent implements OnInit {
    * @param {Router} router - Servicio de enrutamiento de Angular para la navegación.
    * @param {ChangeDetectorRef} cdr - Referencia para el detector de cambios de Angular.
    */
-  constructor(private movieService: MovieService, private router: Router, private cdr: ChangeDetectorRef) { }
+  constructor(private movieService: MovieService, private router: Router, private cdr: ChangeDetectorRef) {
+  }
+
+  private searchSubscription: Subscription | undefined;
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
 
   /**
    * Hook del ciclo de vida de Angular. Se ejecuta cuando el componente se inicializa.
    */
   ngOnInit(): void {
-    this.searchTerm
+    this.searchSubscription = this.searchTerm
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
@@ -131,7 +140,6 @@ export class MovieListComponent implements OnInit {
   }
 
 
-
   /**
    * Ejecuta la búsqueda de películas o programas de TV.
    * @private
@@ -142,7 +150,7 @@ export class MovieListComponent implements OnInit {
   private executeSearch(term: string, page: number): Observable<PagedResponse<MovieListItem>> {
     if (!term) {
       // Si el término está vacío, devuelve un observable con resultados vacíos.
-      return of({ results: [], page: 1, total_pages: 0, total_results: 0 });
+      return of({results: [], page: 1, total_pages: 0, total_results: 0});
     }
     return this.searchType === 'movie'
       ? this.movieService.searchMovies(term, page) // Llama al servicio para buscar películas.
@@ -187,12 +195,12 @@ export class MovieListComponent implements OnInit {
     this.searchResults = [];
     this.totalResults = 0;
     this.searched = false;
+    this.error = null;
   }
 
   /**
    * Se llama cuando el usuario escribe en el campo de búsqueda.
    * Actualiza `searchText` y emite el nuevo valor a `searchTerm`.
-   * @param {Event} event - El evento de input del campo de búsqueda.
    */
   search(): void {
     this.searching = true; // Marca que se está realizando una búsqueda.
