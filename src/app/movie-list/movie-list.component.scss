@@ -61,7 +61,7 @@ mat-list {
 
     &:hover {
       transform: translateY(-2px);
-      background-color: #f5f5f5;
+      background-color: var(--mat-sys-surface-container, #f5f5f5);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
@@ -81,7 +81,7 @@ mat-list {
       background-color: var(--mat-sys-surface-container-highest);
 
       &.no-poster {
-        background-image: url(public/no-poster.svg);
+        background-image: url(../../assets/no-poster.svg);
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;

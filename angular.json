@@ -29,7 +29,7 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets"
               }
             ],
             "styles": [
@@ -101,11 +101,23 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "776cbf72-edc1-43bb-9f46-061a200cfc47"
+    "analytics": "776cbf72-edc1-43bb-9f46-061a200cfc47",
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }

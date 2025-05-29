@@ -63,14 +63,14 @@ export class MovieListComponent implements OnInit {
    * @protected
    * @type {boolean}
    */
-  protected searched = false;
+  searched = false;
 
   /**
    * Indica si una búsqueda está actualmente en curso (cargando datos).
    * @protected
    * @type {boolean}
    */
-  protected searching = false;
+  searching = false;
 
   /**
    * Almacena el texto de búsqueda actual introducido por el usuario.
@@ -83,7 +83,7 @@ export class MovieListComponent implements OnInit {
    * @protected
    * @type {ProgressBarMode}
    */
-  protected mode: ProgressBarMode = 'indeterminate';
+  mode: ProgressBarMode = 'indeterminate';
 
   /**
  * Almacena mensajes de error si ocurre algún problema durante la carga de datos.
@@ -194,7 +194,7 @@ export class MovieListComponent implements OnInit {
    * Actualiza `searchText` y emite el nuevo valor a `searchTerm`.
    * @param {Event} event - El evento de input del campo de búsqueda.
    */
-  search(event: Event): void {
+  search(): void {
     this.searching = true; // Marca que se está realizando una búsqueda.
     this.searchTerm.next(this.searchText); // Emite el valor de this.searchText (actualizado por ngModel).
   }
