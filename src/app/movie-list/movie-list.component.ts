@@ -92,6 +92,12 @@ export class MovieListComponent implements OnInit, OnDestroy {
   error: string | null = null;
 
   /**
+   * Suscripción al observable `searchTerm` para gestionar la cancelación al destruir el componente.
+   * @private
+   */
+  private searchSubscription: Subscription | undefined;
+
+  /**
    * Constructor del componente.
    * @param {MovieService} movieService - Servicio para interactuar con la API de películas.
    * @param {Router} router - Servicio de enrutamiento de Angular para la navegación.
@@ -100,8 +106,9 @@ export class MovieListComponent implements OnInit, OnDestroy {
   constructor(private movieService: MovieService, private router: Router, private cdr: ChangeDetectorRef) {
   }
 
-  private searchSubscription: Subscription | undefined;
-
+  /**
+   * Hook del ciclo de vida de Angular. Se ejecuta cuando el componente se destruye.
+   */
   ngOnDestroy(): void {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
@@ -139,6 +146,55 @@ export class MovieListComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Se llama cuando el usuario escribe en el campo de búsqueda.
+   * Actualiza `searchText` y emite el nuevo valor a `searchTerm`.
+   */
+  search(): void {
+    this.searching = true; // Marca que se está realizando una búsqueda.
+    this.searchTerm.next(this.searchText); // Emite el valor de this.searchText (actualizado por ngModel).
+  }
+
+  /**
+   * Cambia el tipo de búsqueda entre 'movie' y 'tv' cuando el usuario selecciona una pestaña.
+   * @param {number} index - El índice de la pestaña seleccionada (0 para películas, 1 para TV).
+   */
+  toggleSearchType(index: number): void {
+    this.searchType = index === 0 ? 'movie' : 'tv';
+    this.searchResults = [];
+    this.searchText = '';
+    this.page = 1; // Reset page on tab change
+    this.searched = false;
+    this.totalResults = 0;
+    this.resetSearchState();
+    // Emite un término vacío para asegurar que el pipe de searchTerm procese el estado de reseteo,
+    // especialmente si el input no se limpia automáticamente o si se quiere forzar una actualización.
+    this.searchTerm.next('');
+  }
+
+  /**
+   * Se llama cuando el usuario cambia de página utilizando el paginador.
+   * @param {PageEvent} event - El evento emitido por el paginador.
+   */
+  pageChanged(event: PageEvent): void {
+    this.page = event.pageIndex + 1; // Actualiza el número de página (pageIndex es base 0).
+    this.searching = true; // Marca que se está cargando la nueva página.
+    // Ejecuta la búsqueda para la nueva página con el término de búsqueda actual.
+    this.executeSearch(this.searchText.trim(), this.page)
+      .subscribe({
+        next: response => {
+          this.handleSearchResponse(response)
+        },
+        error: error => {
+          this.handleSearchError(error)
+        }
+      });
+  }
+
+  getUrlImage(poster_path: string) {
+    return this.movieService.getImageUrl(poster_path);
+
+  }
 
   /**
    * Ejecuta la búsqueda de películas o programas de TV.
@@ -196,51 +252,5 @@ export class MovieListComponent implements OnInit, OnDestroy {
     this.totalResults = 0;
     this.searched = false;
     this.error = null;
-  }
-
-  /**
-   * Se llama cuando el usuario escribe en el campo de búsqueda.
-   * Actualiza `searchText` y emite el nuevo valor a `searchTerm`.
-   */
-  search(): void {
-    this.searching = true; // Marca que se está realizando una búsqueda.
-    this.searchTerm.next(this.searchText); // Emite el valor de this.searchText (actualizado por ngModel).
-  }
-
-  /**
-   * Cambia el tipo de búsqueda entre 'movie' y 'tv' cuando el usuario selecciona una pestaña.
-   * @param {number} index - El índice de la pestaña seleccionada (0 para películas, 1 para TV).
-   */
-  toggleSearchType(index: number): void {
-    this.searchType = index === 0 ? 'movie' : 'tv';
-    this.searchResults = [];
-    this.searchText = '';
-    this.page = 1; // Reset page on tab change
-    this.searched = false;
-    this.totalResults = 0;
-    this.resetSearchState();
-    // Emite un término vacío para asegurar que el pipe de searchTerm procese el estado de reseteo,
-    // especialmente si el input no se limpia automáticamente o si se quiere forzar una actualización.
-    this.searchTerm.next('');
-  }
-
-  /**
-   * Se llama cuando el usuario cambia de página utilizando el paginador.
-   * @param {PageEvent} event - El evento emitido por el paginador.
-   */
-  pageChanged(event: PageEvent): void {
-    this.page = event.pageIndex + 1; // Actualiza el número de página (pageIndex es base 0).
-    this.searching = true; // Marca que se está cargando la nueva página.
-    // Ejecuta la búsqueda para la nueva página con el término de búsqueda actual.
-    this.executeSearch(this.searchText.trim(), this.page)
-      .subscribe(
-        response => this.handleSearchResponse(response), // Maneja la respuesta.
-        error => this.handleSearchError(error) // Maneja errores.
-      );
-  }
-
-  getUrlImage(poster_path: string) {
-    return this.movieService.getImageUrl(poster_path);
-
   }
 }
