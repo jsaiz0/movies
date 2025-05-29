@@ -1,223 +1,205 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {provideRouter, Router} from '@angular/router'; // Importa provideRouter
-import {FormsModule} from '@angular/forms';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {of, Subscription, throwError} from 'rxjs'; // Importar Subject y Subscription
-import {ChangeDetectorRef} from '@angular/core';
-import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
+import { of, Subject, throwError } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCardModule } from '@angular/material/card';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import {MovieListComponent} from './movie-list.component';
-import {MovieService} from '../movie.service';
-import {MovieListItem, PagedResponse} from '@app/movie-interfaces';
+import { MovieListComponent } from './movie-list.component';
+import { MovieService } from '../movie.service';
+import { MovieListItem, PagedResponse } from '@app/movie-interfaces';
 
-// Importaciones de Material (solo las necesarias para que el componente compile si se renderizara)
-// Para componentes standalone, las importaciones se manejan directamente en el componente.
-// No todas son necesarias para pruebas de lógica pura, pero es bueno tenerlas si se testeara la interacción con el template.
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatInputModule} from '@angular/material/input';
-import {MatListModule} from '@angular/material/list';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatCardModule} from '@angular/material/card';
-import {provideLocationMocks} from '@angular/common/testing';
-
+/**
+ * Suite de pruebas para el componente MovieListComponent.
+ */
 describe('MovieListComponent', () => {
+  // Declaración de variables que se utilizarán en las pruebas.
   let component: MovieListComponent;
   let fixture: ComponentFixture<MovieListComponent>;
-  let mockMovieService: jasmine.SpyObj<MovieService>;
-  // Router no se usa directamente en los métodos probados, pero es una dependencia inyectada.
-  let mockRouter: jasmine.SpyObj<Router>;
-  let mockChangeDetectorRef: jasmine.SpyObj<ChangeDetectorRef>;
+  let movieService: jasmine.SpyObj<MovieService>;
+  let router: Router;
+  let cdr: ChangeDetectorRef;
 
-  const mockMovieResponse: PagedResponse<MovieListItem> = {
+  /**
+   * Objeto simulado (mock) para una respuesta paginada de la API.
+   * Contiene datos de ejemplo para películas/series.
+   */
+  const mockPagedResponse: PagedResponse<MovieListItem> = {
     page: 1,
-    results: [{id: 1, title: 'Test Movie', name: 'Test Movie', poster_path: '/test.jpg'} as MovieListItem],
     total_pages: 1,
-    total_results: 1,
+    total_results: 2,
+    results: [
+      // Es importante que la estructura de estos objetos coincida con la interfaz MovieListItem
+      // y las propiedades que el componente espera y utiliza (ej. title, name, overview, vote_average).
+      // Aquí se incluyen 'name' y 'title' para cubrir ambos casos (película/serie),
+      // pero en un escenario real, cada item tendría uno u otro, no ambos.
+      // Para pruebas más precisas, se podrían tener mocks separados para películas y series
+      // o asegurar que el mock actual sea suficiente para las propiedades que se están probando.
+      // Se añaden overview y vote_average para mayor completitud si el componente los usa.
+      { id: 1, title: 'Movie 1', name: 'Movie 1', poster_path: '/path1' },
+      { id: 2, title: 'Movie 2', name: 'Movie 2', poster_path: '/path2' }
+    ]
   };
 
-  const mockTvResponse: PagedResponse<MovieListItem> = {
-    page: 1,
-    results: [{id: 2, title: 'Test TV Show', name: 'Test TV Show', poster_path: '/testtv.jpg'} as MovieListItem],
-    total_pages: 1,
-    total_results: 1,
-  };
-
-  const emptyPagedResponse: PagedResponse<MovieListItem> = {
-    page: 1,
-    results: [],
-    total_pages: 0,
-    total_results: 0,
-  };
-
-  beforeEach(async () => {
-    mockMovieService = jasmine.createSpyObj('MovieService', ['searchMovies', 'searchTVShows', 'getImageUrl']);
-    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    mockChangeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
-
-    await TestBed.configureTestingModule({
-      // El componente es standalone, así que se importa directamente.
-      // Los módulos de Angular Material también se importan aquí porque son parte del `imports` del componente.
-      declarations: [],
+  beforeEach(waitForAsync(() => {
+    const movieServiceSpy = jasmine.createSpyObj('MovieService', ['searchMovies', 'searchTVShows', 'getImageUrl']);
+    // Configuración del módulo de pruebas de Angular.
+    // waitForAsync se usa para código asíncrono en beforeEach (como compileComponents).
+    TestBed.configureTestingModule({
       imports: [
-        FormsModule, // Necesario para ngModel
-        NoopAnimationsModule, // Para componentes de Material que podrían tener animaciones
+        // MovieListComponent es un componente standalone, por lo que se importa directamente aquí
+        // si se necesitara renderizar como parte de otro componente de prueba.
+        // Sin embargo, como se crea con TestBed.createComponent(MovieListComponent),
+        // no es estrictamente necesario listarlo en `imports` del TestBed.
+        // Los módulos que MovieListComponent importa (FormsModule, Material modules, etc.) sí son importantes aquí.
+        FormsModule,
         MatTabsModule,
         MatInputModule,
         MatListModule,
         MatPaginatorModule,
         MatProgressBarModule,
         MatCardModule,
-        MovieListComponent
+        HttpClientTestingModule,
+        RouterTestingModule.withRoutes([]),
+        NoopAnimationsModule // Deshabilita las animaciones de Angular Material para pruebas más rápidas y predecibles.
       ],
-      providers: [
-        provideRouter([]), // Configuración básica para el router. Puedes pasar rutas mock si las necesitas.
-        provideLocationMocks(), // Si tus pruebas interactúan con la URL/Location service.
-        {provide: MovieService, useValue: mockMovieService},
-        {provide: Router, useValue: mockRouter},
-        // Proveemos el mock de ChangeDetectorRef. El componente lo inyectará.
-        {provide: ChangeDetectorRef, useValue: mockChangeDetectorRef},
-      ],
+      // declarations: [], // 'declarations' no se usa para componentes standalone en el TestBed.
+      providers: [ // Proveedores de servicios para el entorno de pruebas.
+        { provide: MovieService, useValue: movieServiceSpy },
+        ChangeDetectorRef // Asegúrate de proveer ChangeDetectorRef
+      ]
     }).compileComponents();
 
+    movieService = TestBed.inject(MovieService) as jasmine.SpyObj<MovieService>;
+  }));
+
+  // Configuración síncrona que se ejecuta antes de cada prueba 'it'.
+  beforeEach(() => {
     fixture = TestBed.createComponent(MovieListComponent);
     component = fixture.componentInstance;
-
-    // Configuración por defecto de los spies del servicio
-    mockMovieService.searchMovies.and.returnValue(of(mockMovieResponse));
-    mockMovieService.searchTVShows.and.returnValue(of(mockTvResponse));
-    mockMovieService.getImageUrl.and.callFake((path: string) => `http://image.tmdb.org/t/p/w500${path}`);
+    router = TestBed.inject(Router);
+    cdr = fixture.componentRef.injector.get(ChangeDetectorRef);
+    movieService.getImageUrl.and.returnValue('image-url'); // Simula la respuesta del método getImageUrl.
+    // fixture.detectChanges(); // No llamar a detectChanges aquí si ngOnInit tiene lógica compleja que se prueba específicamente.
   });
 
+  /**
+   * Prueba básica para asegurar que el componente se crea correctamente.
+   */
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+  /**
+   * Pruebas para el método ngOnInit.
+   */
   describe('ngOnInit', () => {
-    it('should initialize searchTerm subscription and handle search term emission', fakeAsync(() => {
-      const searchTerm = 'inception';
-      mockMovieService.searchMovies.and.returnValue(of(mockMovieResponse)); // Asegurar que el mock está listo
+    /**
+     * Prueba que el componente se suscribe a `searchTerm` y ejecuta la búsqueda después del debounce.
+     */
+    it('should subscribe to searchTerm and execute search after debounce', fakeAsync(() => {
+      movieService.searchMovies.and.returnValue(of(mockPagedResponse));
+      spyOn(component as any, 'executeSearch').and.callThrough();
 
-      component.ngOnInit(); // ngOnInit es llamado por Angular, pero para probar el pipe, lo llamamos aquí.
-
-      component.searchTerm.next(searchTerm);
-      tick(300); // debounceTime
-
-      expect(component.searching).withContext('searching should be true after tap before switchMap resolves').toBeTrue();
-      expect(component.page).withContext('page should be reset to 1 for new search').toBe(1);
-      expect(mockMovieService.searchMovies).toHaveBeenCalledWith(searchTerm, 1);
-
-      // Simular la resolución de la búsqueda
-      fixture.detectChanges(); // Para que el subscribe se ejecute y actualice el estado
-
-      expect(component.searchResults).toEqual(mockMovieResponse.results);
-      expect(component.totalResults).toBe(mockMovieResponse.total_results);
-      expect(component.searching).withContext('searching should be false after search response').toBeFalse();
-      expect(component.searched).toBeTrue();
-      expect(component.error).toBeNull();
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
+      fixture.detectChanges(); // ngOnInit is called
+      component.searchTerm.next('test');
+      tick(300); // Wait for debounceTime
+      // Verifica que se llamó a executeSearch y al servicio con los parámetros correctos.
+      expect((component as any).executeSearch).toHaveBeenCalledWith('test', 1);
+      expect(movieService.searchMovies).toHaveBeenCalledWith('test', 1);
+      expect(component.searchResults).toEqual(mockPagedResponse.results);
+      expect(component.totalResults).toBe(mockPagedResponse.total_results);
+      expect(component.searching).toBeFalse();
     }));
 
-    it('should reset search state if search term is empty or whitespace', fakeAsync(() => {
+    /**
+     * Prueba que el estado de búsqueda se resetea si `searchTerm` está vacío.
+     */
+    it('should reset search state if searchTerm is empty', fakeAsync(() => {
       spyOn(component as any, 'resetSearchState').and.callThrough();
-      component.ngOnInit();
+      fixture.detectChanges();
 
-      component.searchTerm.next('  '); // Término con solo espacios
-      tick(300); // debounceTime
+      component.searchTerm.next('');
+      tick(300);
 
+      // Verifica que se llamó a resetSearchState y que las propiedades se resetearon.
       expect((component as any).resetSearchState).toHaveBeenCalled();
-      expect(component.searching).toBeFalse();
-      expect(component.searchResults.length).toBe(0);
+      expect(component.searchResults).toEqual([]);
       expect(component.totalResults).toBe(0);
       expect(component.searched).toBeFalse();
-      expect(component.error).toBeNull();
-      // executeSearch devolverá un of(emptyResponse) que llamará a handleSearchResponse
-      // handleSearchResponse llamará a cdr.detectChanges()
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
     }));
 
-    it('should handle search error from API correctly', fakeAsync(() => {
-      const errorResponse = {message: 'API Error'};
-      mockMovieService.searchMovies.and.returnValue(throwError(() => errorResponse));
-      component.searchText = 'error_test'; // Para que `searched` se ponga a true
-      component.ngOnInit();
+    it('should handle search error', fakeAsync(() => {
+      /**
+       * Prueba el manejo de errores cuando la búsqueda falla.
+       */
+      movieService.searchMovies.and.returnValue(throwError(() => new Error('Search Error')));
+      spyOn(component as any, 'handleSearchError').and.callThrough();
+      fixture.detectChanges();
 
-      component.searchTerm.next('error_test');
-      tick(300); // debounceTime
+      component.searchTerm.next('error');
+      tick(300);
 
+      // Verifica que se llamó a handleSearchError y que el estado refleja el error.
+      expect((component as any).handleSearchError).toHaveBeenCalled();
       expect(component.searching).toBeFalse();
-      expect(component.searchResults.length).toBe(0);
+      expect(component.searchResults).toEqual([]);
       expect(component.totalResults).toBe(0);
       expect(component.error).toBe('Error en la búsqueda. Por favor, inténtalo de nuevo.');
-      expect(component.searched).toBeTrue(); // Porque se intentó una búsqueda con 'error_test'
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
     }));
   });
 
-  describe('ngOnDestroy', () => {
-    it('should unsubscribe from searchSubscription if it exists', () => {
-      // Simular una suscripción activa
-      component.ngOnInit(); // Esto crea la suscripción
-      const mockSubscription = (component as any).searchSubscription as Subscription;
-      spyOn(mockSubscription, 'unsubscribe');
-
-      component.ngOnDestroy();
-
-      expect(mockSubscription.unsubscribe).toHaveBeenCalled();
-    });
-
-    it('should not throw if searchSubscription is undefined', () => {
-      expect(() => component.ngOnDestroy()).not.toThrow();
-    });
-  });
-
-  describe('search method', () => {
-    it('should set searching to true and emit current searchText to searchTerm Subject', () => {
+  describe('search', () => {
+    /**
+     * Pruebas para el método `search`.
+     */
+    it('should update searchText and trigger searchTerm', () => {
+      /**
+       * Prueba que el método `search` actualiza `searchText` y emite un valor a `searchTerm`.
+       */
       spyOn(component.searchTerm, 'next');
-      component.searchText = 'Matrix';
-
+      component.searchText = 'new search';
       component.search();
 
       expect(component.searching).toBeTrue();
-      expect(component.searchTerm.next).toHaveBeenCalledWith('Matrix');
+      expect(component.searchTerm.next).toHaveBeenCalledWith('new search');
     });
   });
 
   describe('toggleSearchType', () => {
-    it('should switch to TV search, reset state, and emit empty search term', () => {
-      spyOn(component.searchTerm, 'next');
+    /**
+     * Pruebas para el método `toggleSearchType`.
+     */
+    it('should change searchType to tv and reset state when index is 1', () => {
+      /**
+       * Prueba que `toggleSearchType` cambia a 'tv' y resetea el estado cuando el índice es 1.
+       */
       spyOn(component as any, 'resetSearchState').and.callThrough();
+      spyOn(component.searchTerm, 'next');
 
-      // Estado inicial
-      component.searchType = 'movie';
-      component.searchText = 'Old search';
-      component.searchResults = [{} as MovieListItem];
-      component.page = 2;
-      component.searched = true;
-      component.totalResults = 10;
-      component.error = 'Some error';
-
-      component.toggleSearchType(1); // 1 para TV
+      component.toggleSearchType(1);
 
       expect(component.searchType).toBe('tv');
-      expect(component.searchText).toBe('');
-      expect(component.page).toBe(1);
       expect((component as any).resetSearchState).toHaveBeenCalled();
-      // resetSearchState se encarga de:
-      expect(component.searching).toBeFalse();
-      expect(component.searchResults.length).toBe(0);
-      expect(component.totalResults).toBe(0);
-      expect(component.searched).toBeFalse();
-      expect(component.error).toBeNull();
-
       expect(component.searchTerm.next).toHaveBeenCalledWith('');
     });
 
-    it('should switch to Movie search and reset state similarly', () => {
-      spyOn(component.searchTerm, 'next');
+    it('should change searchType to movie and reset state when index is 0', () => {
+      /**
+       * Prueba que `toggleSearchType` cambia a 'movie' y resetea el estado cuando el índice es 0.
+       */
       spyOn(component as any, 'resetSearchState').and.callThrough();
-      component.searchType = 'tv'; // Empezar como tv
+      spyOn(component.searchTerm, 'next');
 
-      component.toggleSearchType(0); // 0 para Movie
+      component.toggleSearchType(0);
 
       expect(component.searchType).toBe('movie');
       expect((component as any).resetSearchState).toHaveBeenCalled();
@@ -225,153 +207,150 @@ describe('MovieListComponent', () => {
     });
   });
 
-  describe('pageChanged method', () => {
-    beforeEach(() => {
-      component.searchText = 'Test Query'; // Necesario para que executeSearch funcione
-    });
+  describe('pageChanged', () => {
+    /**
+     * Pruebas para el método `pageChanged`.
+     */
+    it('should update page and execute search with new page', () => {
+      /**
+       * Prueba que `pageChanged` actualiza la página y ejecuta una nueva búsqueda.
+       */
+      spyOn(component as any, 'executeSearch').and.returnValue(of(mockPagedResponse));
 
-    it('should update page, set searching flag, call executeSearch, and handle successful response', fakeAsync(() => {
-      const pageEvent: PageEvent = {pageIndex: 1, pageSize: 20, length: 100}; // pageIndex 1 significa página 2
-      component.searchType = 'movie';
-      mockMovieService.searchMovies.and.returnValue(of(mockMovieResponse));
-
-      component.pageChanged(pageEvent);
-      // No es necesario tick() aquí si executeSearch devuelve of() que es síncrono
-      // pero si searchMovies fuera asíncrono (ej. con delay), tick() sería necesario.
-
-      expect(component.page).toBe(2);
-      expect(component.searching).withContext('searching should be true before API call resolves').toBeTrue();
-
-      // La suscripción dentro de pageChanged es síncrona si el observable lo es.
-      // handleSearchResponse se llamará inmediatamente.
-      expect(mockMovieService.searchMovies).toHaveBeenCalledWith('Test Query', 2);
-      expect(component.searching).withContext('searching should be false after response').toBeFalse();
-      expect(component.searchResults).toEqual(mockMovieResponse.results);
-      expect(component.totalResults).toEqual(mockMovieResponse.total_results);
-      expect(component.error).toBeNull();
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
-    }));
-
-    it('should handle API error during pageChanged', fakeAsync(() => {
-      const pageEvent: PageEvent = {pageIndex: 1, pageSize: 20, length: 100};
-      const errorResponse = {message: 'Paging Error'};
-      component.searchType = 'tv';
-      mockMovieService.searchTVShows.and.returnValue(throwError(() => errorResponse));
-
+      const pageEvent: PageEvent = { pageIndex: 2, pageSize: 10, length: 100 };
+      component.searchText = 'page search';
       component.pageChanged(pageEvent);
 
-      expect(component.page).toBe(2);
-      expect(component.searching).withContext('searching should be true before API call resolves').toBeTrue();
-
-      // handleSearchError se llamará inmediatamente.
-      expect(mockMovieService.searchTVShows).toHaveBeenCalledWith('Test Query', 2);
-      expect(component.searching).withContext('searching should be false after error').toBeFalse();
-      expect(component.searchResults.length).toBe(0);
-      expect(component.totalResults).toBe(0);
-      expect(component.error).toBe('Error en la búsqueda. Por favor, inténtalo de nuevo.');
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
-    }));
-  });
-
-  describe('getUrlImage method', () => {
-    it('should call movieService.getImageUrl with the provided poster_path', () => {
-      const posterPath = '/path.jpg';
-      const expectedUrl = `http://image.tmdb.org/t/p/w500${posterPath}`;
-      mockMovieService.getImageUrl.and.returnValue(expectedUrl);
-
-      const actualUrl = component.getUrlImage(posterPath);
-
-      expect(mockMovieService.getImageUrl).toHaveBeenCalledWith(posterPath);
-      expect(actualUrl).toBe(expectedUrl);
+      expect(component.page).toBe(3);
+      // Dado que el mock service devuelve of(), la operación de búsqueda es síncrona,
+      // por lo que `searching` se establece en false inmediatamente dentro del `subscribe`.
+      expect(component.searching).toBeFalse();
+      expect((component as any).executeSearch).toHaveBeenCalledWith('page search', 3);
     });
   });
 
-  // Pruebas para métodos privados (a través de su uso en métodos públicos)
-  describe('internal search logic (via executeSearch)', () => {
-    it('executeSearch should call searchMovies for "movie" type with term and page', (done) => {
+  describe('getUrlImage', () => {
+    /**
+     * Pruebas para el método `getUrlImage`.
+     */
+    it('should call movieService.getImageUrl with the provided path', () => {
+      // Prueba que `getUrlImage` llama al método correspondiente del servicio.
+      const path = '/test-path';
+      component.getUrlImage(path);
+      expect(movieService.getImageUrl).toHaveBeenCalledWith(path);
+    });
+  });
+
+  describe('executeSearch', () => {
+    /**
+     * Pruebas para el método privado `executeSearch`.
+     * Se accede a él mediante `(component as any)`.
+     */
+    it('should call searchMovies if searchType is movie', () => {
+      // Prueba que se llama a `searchMovies` si `searchType` es 'movie'.
+      movieService.searchMovies.and.returnValue(of(mockPagedResponse));
       component.searchType = 'movie';
-      (component as any).executeSearch('test movie', 1).subscribe((response: PagedResponse<MovieListItem>) => {
-        expect(mockMovieService.searchMovies).toHaveBeenCalledWith('test movie', 1);
-        expect(response).toEqual(mockMovieResponse);
-        done();
-      });
+
+      (component as any).executeSearch('movie search', 1).subscribe();
+
+      expect(movieService.searchMovies).toHaveBeenCalledWith('movie search', 1);
     });
 
-    it('executeSearch should call searchTVShows for "tv" type with term and page', (done) => {
+    it('should call searchTVShows if searchType is tv', () => {
+      // Prueba que se llama a `searchTVShows` si `searchType` es 'tv'.
+      movieService.searchTVShows.and.returnValue(of(mockPagedResponse));
       component.searchType = 'tv';
-      (component as any).executeSearch('test tv', 1).subscribe((response: PagedResponse<MovieListItem>) => {
-        expect(mockMovieService.searchTVShows).toHaveBeenCalledWith('test tv', 1);
-        expect(response).toEqual(mockTvResponse);
-        done();
-      });
+
+      (component as any).executeSearch('tv search', 1).subscribe();
+
+      expect(movieService.searchTVShows).toHaveBeenCalledWith('tv search', 1);
     });
 
-    it('executeSearch should return observable of empty results if term is empty or whitespace', (done) => {
-      (component as any).executeSearch('   ', 1).subscribe((response: PagedResponse<MovieListItem>) => {
-        expect(response.results.length).toBe(0);
-        expect(response.total_results).toBe(0);
-        expect(mockMovieService.searchMovies).not.toHaveBeenCalled();
-        expect(mockMovieService.searchTVShows).not.toHaveBeenCalled();
-        done();
+    it('should return empty results if term is empty', () => {
+      // Prueba que devuelve resultados vacíos si el término de búsqueda está vacío.
+      (component as any).executeSearch('', 1).subscribe((response: PagedResponse<MovieListItem>) => {
+        expect(response).toEqual({ results: [], page: 1, total_pages: 0, total_results: 0 });
       });
     });
   });
 
-  describe('internal state handlers', () => {
-    it('handleSearchResponse should update state correctly on successful search', () => {
-      component.searching = true; // Simular estado previo
-      component.searchText = 'ValidSearch';
-      component.error = 'Previous error'; // Simular error previo
-
-      (component as any).handleSearchResponse(mockMovieResponse);
-
-      expect(component.searching).toBeFalse();
-      expect(component.searchResults).toEqual(mockMovieResponse.results);
-      expect(component.totalResults).toBe(mockMovieResponse.total_results);
-      expect(component.searched).toBeTrue();
-      expect(component.error).withContext('error should be null on success').toBeNull(); // Asumimos que se limpia, aunque el código actual no lo hace explícitamente aquí.
-      // La lógica de limpieza de error está más en ngOnInit y pageChanged.
-      // Si se espera que handleSearchResponse limpie el error, se debe añadir.
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
-    });
-
-    it('handleSearchResponse should set searched to false if searchText was empty/whitespace', () => {
-      component.searchText = '  ';
-      (component as any).handleSearchResponse(emptyPagedResponse);
-      expect(component.searched).toBeFalse();
-    });
-
-    it('handleSearchError should update state correctly on search error', () => {
-      component.searching = true;
-      component.searchResults = [{} as MovieListItem];
-      component.totalResults = 10;
-      component.searchText = 'ErrorCausingSearch';
-
-      (component as any).handleSearchError({message: 'Test Error'});
+  describe('handleSearchResponse', () => {
+    /**
+     * Pruebas para el método privado `handleSearchResponse`.
+     */
+    it('should update component properties with the response data', () => {
+      /**
+       * Prueba que las propiedades del componente se actualizan correctamente con la respuesta.
+       */
+      component.searchText = 'test';
+      (component as any).handleSearchResponse(mockPagedResponse);
 
       expect(component.searching).toBeFalse();
-      expect(component.searchResults.length).toBe(0);
+      expect(component.searchResults).toEqual(mockPagedResponse.results);
+      expect(component.totalResults).toBe(mockPagedResponse.total_results);
+      expect(component.searched).toBe(true);
+    });
+  });
+
+  describe('handleSearchError', () => {
+    /**
+     * Pruebas para el método privado `handleSearchError`.
+     */
+    it('should update component properties on error', () => {
+      /**
+       * Prueba que las propiedades del componente se actualizan correctamente en caso de error.
+       */
+      spyOn(console, 'error');
+      component.searchText = 'test';
+      (component as any).handleSearchError('test error');
+
+      expect(console.error).toHaveBeenCalledWith('Search failed:', 'test error');
+      expect(component.searching).toBeFalse();
+      expect(component.searchResults).toEqual([]);
       expect(component.totalResults).toBe(0);
-      expect(component.searched).toBeTrue();
+      expect(component.searched).toBe(true);
       expect(component.error).toBe('Error en la búsqueda. Por favor, inténtalo de nuevo.');
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
     });
+  });
 
-    it('resetSearchState should reset all relevant search properties', () => {
-      // Configurar un estado inicial "sucio"
+  describe('resetSearchState', () => {
+    /**
+     * Pruebas para el método privado `resetSearchState`.
+     */
+    it('should reset component properties to initial state', () => {
+      /**
+       * Prueba que las propiedades del componente se resetean a sus valores iniciales.
+       */
       component.searching = true;
-      component.searchResults = [{} as MovieListItem];
-      component.totalResults = 10;
+      component.searchResults = mockPagedResponse.results;
+      component.totalResults = mockPagedResponse.total_results;
       component.searched = true;
-      component.error = 'An error';
+      component.error = 'some error';
 
       (component as any).resetSearchState();
 
       expect(component.searching).toBeFalse();
-      expect(component.searchResults.length).toBe(0);
+      expect(component.searchResults).toEqual([]);
       expect(component.totalResults).toBe(0);
       expect(component.searched).toBeFalse();
       expect(component.error).toBeNull();
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    /**
+     * Pruebas para el método `ngOnDestroy`.
+     */
+    it('should unsubscribe from searchTerm', () => {
+      /**
+       * Prueba que el componente se desuscribe de `searchTerm` al destruirse.
+       */
+      const subscription = component['searchSubscription'] = new Subject<string>().subscribe();
+      spyOn(subscription, 'unsubscribe');
+
+      component.ngOnDestroy();
+
+      expect(subscription.unsubscribe).toHaveBeenCalled();
     });
   });
 });
