@@ -204,7 +204,8 @@ export class MovieListComponent implements OnInit, OnDestroy {
    * @returns {Observable<PagedResponse<MovieListItem>>} Un observable con la respuesta paginada.
    */
   private executeSearch(term: string, page: number): Observable<PagedResponse<MovieListItem>> {
-    if (!term) {
+    const trimmedTerm = term.trim();
+    if (!trimmedTerm) {
       // Si el término está vacío, devuelve un observable con resultados vacíos.
       return of({results: [], page: 1, total_pages: 0, total_results: 0});
     }

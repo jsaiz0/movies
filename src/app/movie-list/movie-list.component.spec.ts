@@ -1,12 +1,10 @@
-
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
+import {provideRouter, Router} from '@angular/router'; // Importa provideRouter
 import {FormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {of, throwError, Subscription} from 'rxjs'; // Importar Subject y Subscription
+import {of, Subscription, throwError} from 'rxjs'; // Importar Subject y Subscription
 import {ChangeDetectorRef} from '@angular/core';
-import {PageEvent} from '@angular/material/paginator';
-import {Router} from '@angular/router'; // Importar Router
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 
 import {MovieListComponent} from './movie-list.component';
 import {MovieService} from '../movie.service';
@@ -18,9 +16,9 @@ import {MovieListItem, PagedResponse} from '@app/movie-interfaces';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatInputModule} from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
-import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatCardModule} from '@angular/material/card';
+import {provideLocationMocks} from '@angular/common/testing';
 
 describe('MovieListComponent', () => {
   let component: MovieListComponent;
@@ -59,10 +57,9 @@ describe('MovieListComponent', () => {
     await TestBed.configureTestingModule({
       // El componente es standalone, así que se importa directamente.
       // Los módulos de Angular Material también se importan aquí porque son parte del `imports` del componente.
+      declarations: [MovieListComponent],
       imports: [
-        MovieListComponent,
         FormsModule, // Necesario para ngModel
-        RouterTestingModule, // Para routerLink
         NoopAnimationsModule, // Para componentes de Material que podrían tener animaciones
         MatTabsModule,
         MatInputModule,
@@ -72,6 +69,8 @@ describe('MovieListComponent', () => {
         MatCardModule,
       ],
       providers: [
+        provideRouter([]), // Configuración básica para el router. Puedes pasar rutas mock si las necesitas.
+        provideLocationMocks(), // Si tus pruebas interactúan con la URL/Location service.
         {provide: MovieService, useValue: mockMovieService},
         {provide: Router, useValue: mockRouter},
         // Proveemos el mock de ChangeDetectorRef. El componente lo inyectará.
