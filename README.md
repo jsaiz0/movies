@@ -1,6 +1,6 @@
 # Movies App
 
-## Descripción
+## Descripción del Proyecto
 
 Esta aplicación muestra una lista de películas populares y permite a los usuarios ver detalles de cada película. Utiliza la API de [The Movie Database (TMDB)](https://www.themoviedb.org/) para obtener los datos de las películas.
 
@@ -21,15 +21,43 @@ Esta aplicación muestra una lista de películas populares y permite a los usuar
 ### Detalles de Serie
 ![alt text](image-5.png)
 
-## Prerrequisitos
+## Aspectos Generales
+
+### Características Principales
+*   Visualización de una lista de películas populares.
+*   Visualización de detalles específicos de cada película (sinopsis, fecha de lanzamiento, calificación, póster, etc.).
+*   Visualización de una lista de series populares.
+*   Visualización de detalles específicos de cada serie.
+*   Navegación intuitiva entre la lista y los detalles.
+*   Interfaz de usuario moderna utilizando Angular Material.
+
+
+### Arquitectura General
+La aplicación está construida con Angular, siguiendo una arquitectura basada en componentes. Utiliza servicios para la lógica de negocio y la comunicación con APIs externas (TMDB). El enrutamiento se gestiona con Angular Router para una experiencia de navegación fluida (SPA - Single Page Application). Los estilos se manejan con SCSS y Angular Material para una interfaz de usuario consistente y atractiva.
+
+## Aspectos Técnicos
+
+### Tecnologías Utilizadas
+*   **Framework Frontend:** [Angular](https://angular.io/) (19)
+*   **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
+*   **Componentes UI:** [Angular Material](https://material.angular.io/)
+*   **API Externa:** [The Movie Database (TMDB) API](https://www.themoviedb.org/)
+*   **Enrutamiento:** Angular Router
+*   **Estilos:** SCSS, Angular Material Theming
+*   **Gestor de Paquetes/Bundler:** npm, [Bun.sh](https://bun.sh/) (opcional), Angular CLI
+*   **Entorno de Ejecución (para desarrollo):** [Node.js](https://nodejs.org/)
+
+### Instalación y Configuración
+
+#### Prerrequisitos
 
 Antes de comenzar, asegúrate de tener instalado lo siguiente:
 - [Node.js](https://nodejs.org/) (que incluye npm)
 - [Angular CLI](https://angular.io/cli): `npm install -g @angular/cli`
 
-## Instalación
+#### Pasos de Instalación
 
-1.  **Clona el repositorio:**
+1.  **Clonar el repositorio:**
     ```bash
     git clone https://github.com/jsaiz0/movies
     cd movies
@@ -83,4 +111,3 @@ La aplicación está construida con Angular y utiliza varios componentes y servi
 4.  El usuario puede hacer clic en una película para navegar a la vista de detalles (`MovieDetailComponent`).
 5.  `MovieDetailComponent` obtiene el ID de la película de los parámetros de la ruta y utiliza `MovieService` para solicitar los detalles completos de esa película a TMDB.
 6.  Se muestra la información detallada de la película.
-
