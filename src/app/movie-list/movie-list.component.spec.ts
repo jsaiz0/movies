@@ -71,7 +71,6 @@ describe('MovieListComponent', () => {
         RouterTestingModule.withRoutes([]),
         NoopAnimationsModule // Deshabilita las animaciones de Angular Material para pruebas más rápidas y predecibles.
       ],
-      // declarations: [], // 'declarations' no se usa para componentes standalone en el TestBed.
       providers: [ // Proveedores de servicios para el entorno de pruebas.
         { provide: MovieService, useValue: movieServiceSpy },
         ChangeDetectorRef // Asegúrate de proveer ChangeDetectorRef
@@ -88,7 +87,6 @@ describe('MovieListComponent', () => {
     router = TestBed.inject(Router);
     cdr = fixture.componentRef.injector.get(ChangeDetectorRef);
     movieService.getImageUrl.and.returnValue('image-url'); // Simula la respuesta del método getImageUrl.
-    // fixture.detectChanges(); // No llamar a detectChanges aquí si ngOnInit tiene lógica compleja que se prueba específicamente.
   });
 
   /**
@@ -222,8 +220,6 @@ describe('MovieListComponent', () => {
       component.pageChanged(pageEvent);
 
       expect(component.page).toBe(3);
-      // Dado que el mock service devuelve of(), la operación de búsqueda es síncrona,
-      // por lo que `searching` se establece en false inmediatamente dentro del `subscribe`.
       expect(component.searching).toBeFalse();
       expect((component as any).executeSearch).toHaveBeenCalledWith('page search', 3);
     });
@@ -244,7 +240,6 @@ describe('MovieListComponent', () => {
   describe('executeSearch', () => {
     /**
      * Pruebas para el método privado `executeSearch`.
-     * Se accede a él mediante `(component as any)`.
      */
     it('should call searchMovies if searchType is movie', () => {
       // Prueba que se llama a `searchMovies` si `searchType` es 'movie'.
