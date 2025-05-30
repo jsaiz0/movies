@@ -37,9 +37,8 @@ La aplicación está construida con Angular, siguiendo una arquitectura basada e
 ## Aspectos Técnicos
 
 ### Tecnologías Utilizadas
-*   **Framework Frontend:** [Angular](https://angular.io/) (versión específica si es relevante, ej: Angular 16+)
+*   **Framework Frontend:** [Angular](https://angular.io/) (19)
 *   **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
-*   **Gestión de Estado (si aplica):** [Ej: NgRx, Akita, o servicios de Angular]
 *   **Componentes UI:** [Angular Material](https://material.angular.io/)
 *   **API Externa:** [The Movie Database (TMDB) API](https://www.themoviedb.org/)
 *   **Enrutamiento:** Angular Router
@@ -100,23 +99,23 @@ Una vez completada la instalación y configuración:
 ### Estructura de Carpetas Principales
 ```
 /src
-  /app
-    /components       # Componentes reutilizables o específicos de vistas
-      /movie-list     # Componente para la lista de películas
-      /movie-detail   # Componente para los detalles de una película
-    /services         # Servicios
-    /env              # Configuración de entorno (ej: env.ts para API keys)
-    /models           # Interfaces y modelos de datos (ej: movie.model.ts)
-    /shared           # Módulos compartidos, pipes, directivas
-    app.component.ts  # Componente raíz
-    app.config.ts     # Configuración principal de la aplicación (Angular 17+)
-    app.routes.ts     # Definición de rutas
-  /assets             # Archivos estáticos (imágenes, fuentes, etc.)
-  /styles             # Estilos globales (ej: styles.scss)
-  /movie-theme.scss   # Tema personalizado de Angular Material
-main.ts               # Punto de entrada de la aplicación
-...
+  app/                             # Contiene la lógica y componentes principales de Angular.
+    components/                    #   Componentes principales de las vistas o "páginas" de la aplicación.
+      movie-list/                  #   Componente para la vista de lista de películas/series.
+      movie-detail/                #   Componente para la vista de detalles de una película/serie.
+    env/                           #   Configuración de variables de entorno (ej: `env.ts` para API keys).
+    services/                      #   Servicios de Angular para lógica de negocio y acceso a datos (ej: `movie.service.ts`).
+    app.config.ts                  #   Configuración principal de la aplicación (para standalone apps, Angular 17+).
+    app.routes.ts                  #   Definición de las rutas principales de la aplicación.
+    app.component.ts               #   Componente raíz de la aplicación.
+  assets/                          # Archivos estáticos (imágenes, fuentes, íconos, etc.).
+  styles.scss                      # Archivo SCSS global principal de la aplicación (a veces en `src/styles/styles.scss`).
+  movie-theme.scss                 # Archivo SCSS para el tema personalizado de Angular Material (puede estar en `src/` o `src/styles/`).
+  index.html                       # Archivo HTML principal que se sirve al navegador.
+  main.ts                          # Punto de entrada de la aplicación TypeScript, donde se arranca Angular.
+...                                # A nivel de raíz del proyecto: angular.json, package.json, tsconfig.json, etc.
 ```
+
 
 ### Componentes Clave y Flujo de Datos
 
