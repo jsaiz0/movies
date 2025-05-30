@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MovieService } from './movie.service';
-import { environment } from './env/env';
-import { MovieDetail, PagedResponse, MovieListItem, TVShowDetail } from './movie-interfaces';
+import { environment } from '../env/env';
+import { MovieDetail, PagedResponse, MovieListItem, TVShowDetail } from '../movie-interfaces';
 
 /**
  * Suite de pruebas para el servicio MovieService.

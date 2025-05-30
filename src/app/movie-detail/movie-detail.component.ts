@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MovieService} from '../movie.service';
+import { MovieService} from '../services/movie.service';
 import { MovieDetail,TVShowDetail } from '../movie-interfaces';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {MovieService} from '../movie.service';
+import {MovieService} from '../services/movie.service';
 import {Router, RouterModule} from '@angular/router';
 import {Observable, of, Subject, Subscription} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';

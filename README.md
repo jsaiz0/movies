@@ -31,20 +31,20 @@ Esta aplicación muestra una lista de películas populares y permite a los usuar
 *   Navegación intuitiva entre la lista y los detalles.
 *   Interfaz de usuario moderna utilizando Angular Material.
 
-
 ### Arquitectura General
 La aplicación está construida con Angular, siguiendo una arquitectura basada en componentes. Utiliza servicios para la lógica de negocio y la comunicación con APIs externas (TMDB). El enrutamiento se gestiona con Angular Router para una experiencia de navegación fluida (SPA - Single Page Application). Los estilos se manejan con SCSS y Angular Material para una interfaz de usuario consistente y atractiva.
 
 ## Aspectos Técnicos
 
 ### Tecnologías Utilizadas
-*   **Framework Frontend:** [Angular](https://angular.io/) (19)
+*   **Framework Frontend:** [Angular](https://angular.io/) (versión específica si es relevante, ej: Angular 16+)
 *   **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
+*   **Gestión de Estado (si aplica):** [Ej: NgRx, Akita, o servicios de Angular]
 *   **Componentes UI:** [Angular Material](https://material.angular.io/)
 *   **API Externa:** [The Movie Database (TMDB) API](https://www.themoviedb.org/)
 *   **Enrutamiento:** Angular Router
 *   **Estilos:** SCSS, Angular Material Theming
-*   **Gestor de Paquetes/Bundler:** npm, [Bun.sh](https://bun.sh/) (opcional), Angular CLI
+*   **Gestor de Paquetes/Bundler:** npm, [Bun.sh](https://bun.sh/) (opcionalmente), Angular CLI
 *   **Entorno de Ejecución (para desarrollo):** [Node.js](https://nodejs.org/)
 
 ### Instalación y Configuración
@@ -62,8 +62,8 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
     git clone https://github.com/jsaiz0/movies
     cd movies
     ```
-2.  **Instala las dependencias:**
-La Instalación de dependencias se ha usado [Bun.sh](https://bun.sh/) por su eficiencia y rapidez, pero se puede utilizar igualmente npm que es el método más común.
+2.  **Instalar las dependencias:**
+La Instalación de dependencias se ha usado Bun.sh por su eficiencia y rapidez, pero se puede utilizar igualmente npm que es el método más común.
 
 - Método NPM
     ```bash
@@ -76,7 +76,7 @@ La Instalación de dependencias se ha usado [Bun.sh](https://bun.sh/) por su efi
     bun install
     ```
 
-3.  **Configura la API Key de TMDB:**
+3.  **Configurar la API Key de TMDB:**
     Crea un archivo `env.ts` dentro de la carpeta `src/app/env/` con el siguiente contenido, reemplazando `<TU_API_KEY_DE_TMDB>` con tu clave de API real:
     ```typescript
     // src/app/env/env.ts
@@ -87,27 +87,74 @@ La Instalación de dependencias se ha usado [Bun.sh](https://bun.sh/) por su efi
     ```
     Puedes obtener una API key registrándote en TMDB.
 
-4.  **Ejecuta la aplicación en modo de desarrollo:**
+### Cómo Ejecutar el Proyecto
+
+Una vez completada la instalación y configuración:
+
+1.  **Ejecuta la aplicación en modo de desarrollo:**
     ```bash
     ng serve -o
     ```
     Navega a `http://localhost:4200/`. La aplicación se recargará automáticamente si cambias alguno de los archivos fuente.
 
-## Cómo Funciona
+### Estructura de Carpetas Principales
+```
+/src
+  /app
+    /components       # Componentes reutilizables o específicos de vistas
+      /movie-list     # Componente para la lista de películas
+      /movie-detail   # Componente para los detalles de una película
+    /services         # Servicios
+    /env              # Configuración de entorno (ej: env.ts para API keys)
+    /models           # Interfaces y modelos de datos (ej: movie.model.ts)
+    /shared           # Módulos compartidos, pipes, directivas
+    app.component.ts  # Componente raíz
+    app.config.ts     # Configuración principal de la aplicación (Angular 17+)
+    app.routes.ts     # Definición de rutas
+  /assets             # Archivos estáticos (imágenes, fuentes, etc.)
+  /styles             # Estilos globales (ej: styles.scss)
+  /movie-theme.scss   # Tema personalizado de Angular Material
+main.ts               # Punto de entrada de la aplicación
+...
+```
 
-La aplicación está construida con Angular y utiliza varios componentes y servicios para funcionar:
+### Componentes Clave y Flujo de Datos
 
--   **`AppComponent`**: Es el componente raíz de la aplicación y el `<router-outlet>` donde se cargan los demás componentes según la ruta.
--   **`MovieListComponent`**: Muestra una lista de películas (posiblemente paginada) obtenidas de TMDB. Cada película en la lista es un enlace a su vista de detalle.
--   **`MovieDetailComponent`**: Muestra información detallada sobre una película específica, como su sinopsis, fecha de lanzamiento, calificación, póster, etc.
--   **`MovieService`**: Este servicio es responsable de realizar las llamadas a la API de TMDB para obtener la lista de películas y los detalles de una película específica. Utiliza la `apiKey` configurada en `src/app/env/env.ts`.
--   **Enrutamiento**: Angular Router se utiliza para gestionar la navegación entre la lista de películas y las vistas de detalle de cada película. Las rutas principales se definen en `src/app/app.routes.ts`.
--   **Estilos**: La aplicación utiliza Angular Material para los componentes de la interfaz de usuario y tiene un tema personalizado definido en `src/movie-theme.scss` y aplicado globalmente en `src/styles.scss`.
+La aplicación se organiza alrededor de varios componentes y servicios principales:
+-   **`AppComponent`**: Es el componente raíz de la aplicación. Contiene el `<router-outlet>` donde se cargan dinámicamente los demás componentes según la ruta activa.
+-   **`MovieListComponent`**: Responsable de mostrar la lista de películas (y series). Utiliza `MovieService` para obtener los datos de TMDB. Cada elemento de la lista permite navegar a la vista de detalle correspondiente.
+-   **`MovieDetailComponent`**: Muestra información detallada sobre una película o serie específica. Recibe el ID del elemento a través de los parámetros de la ruta y utiliza `MovieService` para obtener los detalles completos.
+-   **`MovieService`**: Encapsula toda la lógica para interactuar con la API de TMDB. Realiza las llamadas HTTP para obtener listas de películas/series y detalles específicos, utilizando la `apiKey` configurada.
+-   **Enrutamiento (`app.routes.ts`)**: Angular Router gestiona la navegación. Define las rutas para la lista de películas/series y las vistas de detalle, asociando cada ruta a su componente correspondiente.
+-   **Estilos (`movie-theme.scss`, `styles.scss`)**: La aplicación utiliza Angular Material para los componentes de la interfaz de usuario, con un tema personalizado para asegurar una apariencia visual coherente.
 
-### Flujo Básico:
-1.  El usuario accede a la aplicación, generalmente a la ruta raíz que muestra `MovieListComponent`.
-2.  `MovieListComponent` utiliza `MovieService` para solicitar una lista de películas populares a la API de TMDB.
-3.  Las películas se muestran en una lista.
-4.  El usuario puede hacer clic en una película para navegar a la vista de detalles (`MovieDetailComponent`).
-5.  `MovieDetailComponent` obtiene el ID de la película de los parámetros de la ruta y utiliza `MovieService` para solicitar los detalles completos de esa película a TMDB.
-6.  Se muestra la información detallada de la película.
+#### Flujo Básico de Usuario:
+1.  El usuario accede a la aplicación, típicamente a la ruta raíz, que carga `MovieListComponent`.
+2.  `MovieListComponent` invoca a `MovieService` para solicitar la lista de películas/series populares desde la API de TMDB.
+3.  `MovieService` realiza la petición HTTP a TMDB y devuelve los datos.
+4.  `MovieListComponent` renderiza la lista de películas/series.
+5.  El usuario hace clic en una película/serie para ver sus detalles.
+6.  Angular Router navega a la ruta de detalles, cargando `MovieDetailComponent` y pasando el ID del elemento como parámetro de ruta.
+7.  `MovieDetailComponent` extrae el ID de los parámetros de la ruta e invoca a `MovieService` para obtener los detalles completos del elemento seleccionado.
+8.  `MovieService` realiza la petición HTTP correspondiente a TMDB.
+9.  `MovieDetailComponent` recibe los datos y muestra la información detallada.
+
+### Documentación de API Externa
+Este proyecto consume la [API de The Movie Database (TMDB)](https://developer.themoviedb.org/docs/getting-started). Para más información sobre los endpoints utilizados y la estructura de datos, consulta la documentación oficial de la API de TMDB.
+
+## Pruebas
+
+### Cómo Ejecutar las Pruebas
+Para ejecutar el conjunto de pruebas unitarias y de componentes configuradas en el proyecto, utiliza el siguiente comando de Angular CLI:
+```bash
+ng test
+```
+### Tipos de Pruebas
+El proyecto debería idealmente incluir los siguientes tipos de pruebas para asegurar su calidad y correcto funcionamiento:
+*   **Pruebas Unitarias:** Enfocadas en verificar la lógica de los métodos individuales dentro de los servicios, componentes (clases TypeScript) y pipes.
+*   **Pruebas de Componentes:** Verifican la correcta renderización, interacción y comportamiento de los componentes de Angular de forma aislada o con interacciones mínimas.
+
+### Herramientas de Pruebas Utilizadas
+*   **Pruebas Unitarias y de Componentes:** Jasmine (framework de pruebas), Karma (test runner).
+
+

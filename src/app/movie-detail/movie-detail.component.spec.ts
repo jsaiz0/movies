@@ -10,7 +10,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 
-import { MovieService } from '@app/movie.service';
+import { MovieService } from '@app/services/movie.service';
 import { MovieDetail, TVShowDetail } from '@app/movie-interfaces';
 
 /**
@@ -153,7 +153,7 @@ describe('MovieDetailComponent', () => {
     component.id = '1';
     component.type = 'tv';
     movieService.getMovieDetails.and.returnValue(of(mockTvShow)); // Corregido: usar el espía getMovieDetails
-    
+
     fixture.detectChanges(); // Triggers ngOnInit
     tick();
 

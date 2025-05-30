@@ -14,7 +14,7 @@ import { MatCardModule } from '@angular/material/card';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MovieListComponent } from './movie-list.component';
-import { MovieService } from '../movie.service';
+import { MovieService } from '../services/movie.service';
 import { MovieListItem, PagedResponse } from '@app/movie-interfaces';
 
 /**
